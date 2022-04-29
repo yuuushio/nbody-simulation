@@ -9,20 +9,25 @@ class Vector:
     def get_vector(self):
         return [self.x, self.y, self.z]
 
-    def __add__(self, i, j):
-        if type(j) == Vector:
-            return Vector(i.x+j.x, i.y+j.y, i.z+j.z)
-        return Vector(i.x+j, i.y+j, i.z+j)
+    def __add__(self, other):
+        if type(other) == Vector:
+            return Vector(self.x+other.x, self.y+other.y, self.z+other.z)
+        return Vector(self.x+other, self.y+other, self.z+other)
 
-    def __sub__(self, i, j):
-        if type(j) == Vector:
-            return Vector(i.x-j.x, i.y-j.y, i.z-j.z)
-        return Vector(i.x-j, i.y-j, i.z-j)
+    def __sub__(self, other):
+        if type(other) == Vector:
+            return Vector(self.x-other.x, self.y-other.y, self.z-other.z)
+        return Vector(self.x-other, self.y-other, self.z-other)
     
-    def __mul__(self, i, j):
-        if type(j) == Vector:
-            return Vector(i.x*j.x, i.y*j.y, i.z*j.z)
-        return Vector(i.x*j, i.y*j, i.z*j)
+    def __mul__(self, other):
+        if type(other) == Vector:
+            return Vector(self.x*other.x, self.y*other.y, self.z*other.z)
+        return Vector(self.x*other, self.y*other, self.z*other)
+
+    def __truediv__(self, other):
+        if type(other) == Vector:
+            return Vector(self.x/other.x, self.y/other.y, self.z/other.z)
+        return Vector(self.x/other, self.y/other, self.z/other)
 
 class Body_Builder:
     def __init__(self):
@@ -125,8 +130,17 @@ class Body:
         delta_pos_sq = delta_pos * delta_pos
         return np.sqrt(delta_pos_sq[0] + delta_pos_sq[1] + delta_pos_sq[2])
 
-    # Returns the magnitude 
+    # Returns the force vector - force acting on x,y,z
     def magnitude(self, inner):
         if type(inner) != Body: raise TypeError
-        return (self.mass*inner.mass)/np.power(self.distance(inner), 2)
+        dp = self.delta_position(inner) # Returns delta vector
+        dist = self.distance(inner)
+        magnitude = (self.mass*inner.mass)/np.power(dist, 2)
+        unit_vector = dp/dist
+        force_vec = []
+        return 
 
+    def accel_x(self, inner):
+        if type(inner) != Body: raise TypeError
+        dp = self.delta_position(inner)
+        dist = self.distance(inner)
