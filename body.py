@@ -125,4 +125,8 @@ class Body:
         delta_pos_sq = delta_pos * delta_pos
         return np.sqrt(delta_pos_sq[0] + delta_pos_sq[1] + delta_pos_sq[2])
 
-    
+    # Returns the magnitude 
+    def magnitude(self, inner):
+        if type(inner) != Body: raise TypeError
+        return (self.mass*inner.mass)/np.power(self.distance(inner), 2)
+
