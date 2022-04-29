@@ -1,3 +1,5 @@
+import numpy as np
+
 class Vector:
     def __init__(self, x, y, z=0):
         self.x = x
@@ -117,6 +119,11 @@ class Body_Mediator:
     
     # Returns thee x distance between the calling body and the argument body
     def delta_position(self, inner_body: Body, outer: Body):
-        return [inner_body.position - outer.position]
+        return inner_body.position - outer.position
 
+    def distance(self, inner_body: Body, outer: Body):
+        delta_pos = self.delta_position(inner_body, outer)
+        # Better to multiply than to use power
+        delta_pos_sq = delta_pos * delta_pos
+        return np.sqrt(delta_pos_sq[0] + delta_pos_sq[1] + delta_pos_sq[2])
 
