@@ -33,9 +33,9 @@ class Vector:
 class Builder:
     def __init__(self):
         # default values
-        self.positon_vector = [0, 0, 0]
-        self.velocity_vector = [0, 0, 0]
-        self.accel_vector = [0, 0, 0]
+        self.positon_vector = Vector(0,0,0)
+        self.velocity_vector = Vector(0,0,0)
+        self.accel_vector = Vector(0,0,0)
         self.m = 1
         self.r = 5
         self.colour = (255, 0, 0)
@@ -139,7 +139,8 @@ class Body:
         delta_pos = self.delta_position(inner)
         # Better to multiply than to use power
         delta_pos_sq = delta_pos * delta_pos
-        return np.sqrt(delta_pos_sq[0] + delta_pos_sq[1] + delta_pos_sq[2])
+        delta_pos_sq_vec = delta_pos_sq.get_vector()
+        return np.sqrt(delta_pos_sq_vec[0] + delta_pos_sq_vec[1] + delta_pos_sq_vec[2])
 
     # Returns the force vector - force acting on x,y,z
     def force(self, inner):
@@ -158,7 +159,7 @@ class Body:
 
     # Draws the body using its current position and attributes
     def draw(self, screen):
-        pygame.draw.circle(screen, self.colour, self.position, self.radius)
+        pygame.draw.circle(screen, self.colour, (self.position.get_vector()[0], self.position.get_vector()[1]), self.radius)
 
     # Updates velocity and moves the body 
     def update(self, dt):
@@ -168,8 +169,11 @@ class Body:
     # Updates velocity using the net acceration and dt
     def update_velocity(self, dt):
         self.velocity += self.acceleration*dt
+        # Reset acceleration
+        self.acceleration = Vector(0,0,0)
 
-def create_bodies():
+
+def create_bodies(w, h):
     body_a = Builder().pos_vec(Vector(w//2,h//2)).vel_vector(Vector(0,0)).mass(100000).build()
     
     body_b = Builder().pos_vec(Vector(w//2+200,h//2)).vel_vector(Vector(0,25)).mass(1).build()
@@ -183,6 +187,28 @@ def main():
     w = 1920
     h = 1080
     fps = 60
+    bodies = create_bodies(w, h)
+    pygame.init()
+    screen = pygame.display.set_mode((w,h))
+    pygame.display.set_caption("nbody")
+    clock = pygame.time.Clock()
+    dt = 0.1
+    run = True
+    while run:
+        clock.tick(fps)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: run = False
+
+        screen.fill((0,0,0))
+
+        for outer_b in bodies:
+            for inner in bodies:
+                if inner is not outer_b:
+                    outer_b.update_acceleration(inner)
+            outer_b.update(dt)
+            outer_b.draw(screen)
+
+        pygame.display.flip()
 
 
 if __name__ == "__main__":
