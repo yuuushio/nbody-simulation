@@ -28,11 +28,17 @@ def calc_distance(b_a, b_b):
     dz = b_a.z - b_b.z
     return np.sqrt(np.power(dx, 2) + np.power(dy, 2) + np.power(dz, 2))
 
+def calc_magnitude(a, b, distance):
+    mass_product = a.mass*b.mass
+    dist_sq = np.power(distance, 2)
+    return g_const()*(mass_product/dist_sq)
+
 # Advances the simulation with time difference (dt)
 def step(body_list, dt):
     for i in range(len(body_list)):
         for j in range(len(body_list)):
             distance = calc_distance(body_list[i], body_list[j])
+            magnitude = calc_magnitude(body_list[i], body_list[j], distance)
 
 def main():
     body_list = []
