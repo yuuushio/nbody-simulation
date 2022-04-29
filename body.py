@@ -111,19 +111,18 @@ class Body:
     def __repr__(self):
         return f"{self.position} {self.velocity} {self.mass}"
 
-# Separate calculation algorithms from the body-object class
-class Body_Mediator:
-    # Class that lets bodies comminicate with each other
-    def __init__(self):
-        pass
-    
-    # Returns thee x distance between the calling body and the argument body
-    def delta_position(self, inner_body: Body, outer: Body):
-        return inner_body.position - outer.position
+    # Where inner is the j'th body in the inner for loop
+    def delta_position(self, inner):
+        if type(inner) != Body: raise TypeError
+        return inner.position - self.position
 
-    def distance(self, inner_body: Body, outer: Body):
-        delta_pos = self.delta_position(inner_body, outer)
+    # Returns the true distance as a combination of position between
+    # calling body and inner body
+    def distance(self, inner): 
+        if type(inner) != Body: raise TypeError
+        delta_pos = self.delta_position(inner)
         # Better to multiply than to use power
         delta_pos_sq = delta_pos * delta_pos
         return np.sqrt(delta_pos_sq[0] + delta_pos_sq[1] + delta_pos_sq[2])
 
+    
