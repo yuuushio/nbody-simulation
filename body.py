@@ -1,4 +1,5 @@
 import numpy as np
+import pygame
 
 class Vector:
     def __init__(self, x, y, z=0):
@@ -34,6 +35,7 @@ class Body_Builder:
         # default values
         self.positon_vector = [0, 0, 0]
         self.velocity_vector = [0, 0, 0]
+        self.accel_vector = [0, 0, 0]
         self.m = 1
         self.r = 5
         self.colour = (255, 0, 0)
@@ -66,6 +68,7 @@ class Body_Builder:
         self.body.mass = self.m
         self.body.radius = self.r
         self.body.colour = self.colour
+        self.body.acceleration = self.accel_vector
         return self.body
 
 class Body:
@@ -112,6 +115,14 @@ class Body:
     def colour(self, c):
         self._colour = c
 
+    @property
+    def acceleration(self):
+        return self._accel
+
+    @acceleration.setter
+    def acceleration(self, accel_vec):
+        self._accel = accel_vec
+
     # Return string representation of the object for printing purposes
     def __repr__(self):
         return f"{self.position} {self.velocity} {self.mass}"
@@ -140,7 +151,19 @@ class Body:
         force_vec = unit_vector*magnitude
         return force_vec
 
-    def acceleration_vector(self, inner):
+    def update_acceleration(self, inner):
         if type(inner) != Body: raise TypeError
         a_vec = self.force(inner)/self.mass
-        return a_vec
+        self.acceleration += a_vec
+
+    # Draws the body using its current position and attributes
+    def draw(self, screen):
+        pygame.draw.circle(screen, self.colour, self.position, self.radius)
+
+    # Updates velocity and moves the body 
+    def update(self, dt):
+        self.update_velocity(dt)
+        self.position += (self.velocity*dt)
+
+    def update_velocity(self, dt):
+        self.velocity += self.acceleration*dt
