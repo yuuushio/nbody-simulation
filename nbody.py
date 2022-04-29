@@ -1,107 +1,215 @@
 import numpy as np
 import pygame
 
-class Body:
-    def __init__(self,x,y,mass,vel_x,vel_y,z=0,vel_z=0):
+class Vector:
+    def __init__(self, x, y, z=0):
         self.x = x
         self.y = y
         self.z = z
-        self.vel_x = vel_x
-        self.vel_y = vel_y
-        self.vel_z = vel_z
-        self.mass = mass
 
-def pi_macro():
-    return 3.141592653589793
+    def get_vector(self):
+        return [self.x, self.y, self.z]
 
-def solar_mass():
-    return (4*pi_macro()*pi_macro())
+    def __add__(self, other):
+        if type(other) == Vector:
+            return Vector(self.x+other.x, self.y+other.y, self.z+other.z)
+        return Vector(self.x+other, self.y+other, self.z+other)
 
-def n_day():
-    return 365.25
+    def __sub__(self, other):
+        if type(other) == Vector:
+            return Vector(self.x-other.x, self.y-other.y, self.z-other.z)
+        return Vector(self.x-other, self.y-other, self.z-other)
+    
+    def __mul__(self, other):
+        if type(other) == Vector:
+            return Vector(self.x*other.x, self.y*other.y, self.z*other.z)
+        return Vector(self.x*other, self.y*other, self.z*other)
 
-def g_const():
-    return (6.67e-11)
+    def __truediv__(self, other):
+        if type(other) == Vector:
+            return Vector(self.x/other.x, self.y/other.y, self.z/other.z)
+        return Vector(self.x/other, self.y/other, self.z/other)
 
-def calc_distance(b_a, b_b):
-    dx = b_a.x - b_b.x
-    dy = b_a.y - b_b.y
-    dz = b_a.z - b_b.z
-    delta_d = [dx, dy, dz]
-    return np.sqrt(np.power(dx, 2) + np.power(dy, 2) + np.power(dz, 2)), delta_d
+class Builder:
+    def __init__(self):
+        # default values
+        self.positon_vector = Vector(0,0,0)
+        self.velocity_vector = Vector(0,0,0)
+        self.accel_vector = Vector(0,0,0)
+        self.m = 1
+        self.r = 5
+        self.colour = (255, 0, 0)
+    
+    def pos_vec(self, vec: Vector):
+        self.positon_vector = vec
+        # Return self so we can chain the construction
+        return self
+    
+    def vel_vector(self, vec: Vector):
+        self.velocity_vector = vec
+        return self
 
-def calc_magnitude(a, b, distance):
-    mass_product = a.mass*b.mass
-    dist_sq = np.power(distance, 2)
-    return (mass_product/dist_sq)
+    def mass(self, m):
+        self.m = m
+        return self
+    
+    def draw_radius(self, r):
+        self.r = r
+        return self
 
-def unit_vec(delta_d, dist):
-    uv = [delta_d[0]/dist, delta_d[1]/dist, delta_d[2]/dist]
-    return uv
+    def col(self, c):
+        self.colour = c
+        return self
 
-# Advances the simulation with time difference (dt)
-def step(body_list, dt):
-    for i in range(len(body_list)):
-        a_x = 0
-        a_y = 0
-        a_z = 0
-        for j in range(len(body_list)):
-            if i != j:
-                distance, delta_d = calc_distance(body_list[j], body_list[i])
-                print(distance, delta_d)
-                magnitude = calc_magnitude(body_list[j], body_list[i], distance)
-                unit_v = unit_vec(delta_d, distance)
-                a_x += (unit_v[0]*magnitude)/body_list[i].mass
-                a_y += (unit_v[1]*magnitude)/body_list[i].mass
-                a_z += (unit_v[2]*magnitude)/body_list[i].mass
-        print("aceleration",a_x, a_y)
-        body_list[i].vel_x += a_x*dt
-        body_list[i].vel_y += a_y*dt
-        body_list[i].vel_z += a_z*dt
-        print(body_list[i].vel_x, body_list[i].vel_y, body_list[i].vel_z)
-        body_list[i].x += body_list[i].vel_x*dt
-        body_list[i].y += body_list[i].vel_y*dt
-        body_list[i].z += body_list[i].vel_z*dt
-        print(body_list[i].x, body_list[i].y, body_list[i].z)
-        print("---")
+    def build(self):
+        self.body = Body()
+        self.body.position = self.positon_vector
+        self.body.velocity = self.velocity_vector
+        self.body.mass = self.m
+        self.body.radius = self.r
+        self.body.colour = self.colour
+        self.body.acceleration = self.accel_vector
+        return self.body
+
+class Body:
+    def __init__(self):
+        pass
+
+    @property
+    def position(self):
+        return self._position
+
+    @position.setter
+    def position(self, pos_vec):
+        self._position = pos_vec
+
+    @property
+    def velocity(self):
+        return self._vel
+
+    @velocity.setter
+    def velocity(self, vel_vec):
+        self._vel = vel_vec
+
+    @property
+    def mass(self):
+        return self._mass
+
+    @mass.setter
+    def mass(self, m):
+        self._mass = m
+
+    @property
+    def radius(self):
+        return self._radius
+
+    @radius.setter
+    def radius(self, r):
+        self._radius = r
+
+    @property
+    def colour(self):
+        return self._colour
+
+    @colour.setter
+    def colour(self, c):
+        self._colour = c
+
+    @property
+    def acceleration(self):
+        return self._accel
+
+    @acceleration.setter
+    def acceleration(self, accel_vec):
+        self._accel = accel_vec
+
+    # Return string representation of the object for printing purposes
+    def __repr__(self):
+        return f"{self.position} {self.velocity} {self.mass}"
+
+    # Where inner is the j'th body in the inner for loop
+    def delta_position(self, inner):
+        if type(inner) != Body: raise TypeError
+        return inner.position - self.position
+
+    # Returns the true distance as a combination of position between
+    # calling body and inner body
+    def distance(self, inner): 
+        if type(inner) != Body: raise TypeError
+        delta_pos = self.delta_position(inner)
+        # Better to multiply than to use power
+        delta_pos_sq = delta_pos * delta_pos
+        delta_pos_sq_vec = delta_pos_sq.get_vector()
+        return np.sqrt(delta_pos_sq_vec[0] + delta_pos_sq_vec[1] + delta_pos_sq_vec[2])
+
+    # Returns the force vector - force acting on x,y,z
+    def force(self, inner):
+        if type(inner) != Body: raise TypeError
+        dp = self.delta_position(inner) # Returns delta vector
+        dist = self.distance(inner)
+        magnitude = (self.mass*inner.mass)/np.power(dist, 2)
+        unit_vector = dp/dist
+        force_vec = unit_vector*magnitude
+        return force_vec
+
+    def update_acceleration(self, inner):
+        if type(inner) != Body: raise TypeError
+        a_vec = self.force(inner)/self.mass
+        self.acceleration += a_vec
+
+    # Draws the body using its current position and attributes
+    def draw(self, screen):
+        pygame.draw.circle(screen, self.colour, (self.position.x, self.position.y), self.radius)
+
+    # Updates velocity and moves the body 
+    def update(self, dt):
+        self.update_velocity(dt)
+        self.position += (self.velocity*dt)
+
+    # Updates velocity using the net acceration and dt
+    def update_velocity(self, dt):
+        self.velocity += self.acceleration*dt
+        # Reset acceleration
+        self.acceleration = Vector(0,0,0)
+
+
+def create_bodies(w, h):
+    body_a = Builder().pos_vec(Vector(w//2,h//2)).vel_vector(Vector(0,0)).mass(100000).build()
+    body_b = Builder().pos_vec(Vector(w//2+200,h//2)).vel_vector(Vector(0,25)).mass(1).build()
+    body_c = Builder().pos_vec(Vector(w//2-300,h//2)).vel_vector(Vector(0,15)).mass(1).build()
+    body_d = Builder().pos_vec(Vector(w//2-380,h//2)).vel_vector(Vector(0,15)).mass(1).build()
+    body_e = Builder().pos_vec(Vector(w//2+400,h//2)).vel_vector(Vector(0,17)).mass(2).build()
+    return [body_a,body_b,body_c,body_d,body_e]
+
 
 def main():
-    w = 5000 
-    h = 5000 
+    w = 1920
+    h = 1080
     fps = 60
-    white = (255,255,255)
-    black = (0,0,0)
-    red = (255,0,0)
-    green = (0,255,0)
-    blue = (0,0,255)
-
-    b_a = Body(w//2, h//2, 100000, 0, 0)
-    b_b = Body(w//2+200, h//2, 1, 0, 25)
-    b_c = Body(w//2-300, h//2, 1, 0, 15)
-    b_d = Body(w//2-380, h//2, 1, 0, 15)
-    b_e = Body(w//2+400, h//2, 2, 0, 17)
-    body_list = [b_a,b_b,b_c,b_d,b_e]
+    bodies = create_bodies(w, h)
     pygame.init()
     screen = pygame.display.set_mode((w,h))
     pygame.display.set_caption("nbody")
     clock = pygame.time.Clock()
-
-    running = True
-    #for i in range(3):
-    #    step(body_list, (0.05*speed))
-    #    print("==============")
-    while running:
+    dt = 0.1
+    run = True
+    while run:
         clock.tick(fps)
         for event in pygame.event.get():
-            if event.type == pygame.QUIT: running = False
-        screen.fill(black)
-        step(body_list, 0.1)
-        for b in body_list:
-            pygame.draw.circle(screen, red, (int(b.x), (b.y)), 10)
+            if event.type == pygame.QUIT: run = False
+
+        screen.fill((0,0,0))
+
+        for outer_b in bodies:
+            for inner in bodies:
+                if inner is not outer_b:
+                    outer_b.update_acceleration(inner)
+            outer_b.update(dt)
+            outer_b.draw(screen)
+
         pygame.display.flip()
-    #for i in range(100):
-    
 
 
 if __name__ == "__main__":
     main()
+
