@@ -33,8 +33,13 @@ class Body_Builder:
         return self
 
     def build(self):
-        body = Body()
-        body.position = self.positon_vector
+        self.body = Body()
+        self.body.position = self.positon_vector
+        self.body.velocity = self.velocity_vector
+        self.body.mass = self.m
+        self.body.radius = self.r
+        self.body.colour = self.colour
+        return self.body
 
 class Body:
     def __init__(self):
@@ -55,3 +60,27 @@ class Body:
     @velocity.setter
     def velocity(self, vel_vec):
         self._vel = vel_vec
+
+    @property
+    def mass(self):
+        return self._mass
+
+    @mass.setter
+    def mass(self, m):
+        self._mass = m
+
+    @property
+    def radius(self):
+        return self._radius
+
+    @radius.setter
+    def radius(self, r):
+        self._radius = r
+
+    @property
+    def colour(self):
+        return self._colour
+
+    @colour.setter
+    def colour(self, c):
+        self._colour = c
