@@ -131,16 +131,16 @@ class Body:
         return np.sqrt(delta_pos_sq[0] + delta_pos_sq[1] + delta_pos_sq[2])
 
     # Returns the force vector - force acting on x,y,z
-    def magnitude(self, inner):
+    def force(self, inner):
         if type(inner) != Body: raise TypeError
         dp = self.delta_position(inner) # Returns delta vector
         dist = self.distance(inner)
         magnitude = (self.mass*inner.mass)/np.power(dist, 2)
         unit_vector = dp/dist
-        force_vec = []
-        return 
+        force_vec = unit_vector*magnitude
+        return force_vec
 
-    def accel_x(self, inner):
+    def acceleration_vector(self, inner):
         if type(inner) != Body: raise TypeError
-        dp = self.delta_position(inner)
-        dist = self.distance(inner)
+        a_vec = self.force(inner)/self.mass
+        return a_vec
