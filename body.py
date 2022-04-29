@@ -30,7 +30,7 @@ class Vector:
             return Vector(self.x/other.x, self.y/other.y, self.z/other.z)
         return Vector(self.x/other, self.y/other, self.z/other)
 
-class Body_Builder:
+class Builder:
     def __init__(self):
         # default values
         self.positon_vector = [0, 0, 0]
@@ -165,5 +165,26 @@ class Body:
         self.update_velocity(dt)
         self.position += (self.velocity*dt)
 
+    # Updates velocity using the net acceration and dt
     def update_velocity(self, dt):
         self.velocity += self.acceleration*dt
+
+def create_bodies():
+    body_a = Builder().pos_vec(Vector(w//2,h//2)).vel_vector(Vector(0,0)).mass(100000).build()
+    
+    body_b = Builder().pos_vec(Vector(w//2+200,h//2)).vel_vector(Vector(0,25)).mass(1).build()
+    body_c = Builder().pos_vec(Vector(w//2-300,h//2)).vel_vector(Vector(0,15)).mass(1).build()
+    body_d = Builder().pos_vec(Vector(w//2-380,h//2)).vel_vector(Vector(0,15)).mass(1).build()
+    body_e = Builder().pos_vec(Vector(w//2+400,h//2)).vel_vector(Vector(0,17)).mass(2).build()
+    return [body_a,body_b,body_c,body_d,body_e]
+
+
+def main():
+    w = 1920
+    h = 1080
+    fps = 60
+
+
+if __name__ == "__main__":
+    main()
+

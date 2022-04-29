@@ -66,8 +66,8 @@ def step(body_list, dt):
         print("---")
 
 def main():
-    w = 1920
-    h = 1080
+    w = 5000 
+    h = 5000 
     fps = 60
     white = (255,255,255)
     black = (0,0,0)
