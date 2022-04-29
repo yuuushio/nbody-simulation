@@ -1,7 +1,7 @@
 import numpy as np
 
 class Body:
-    def __init__(self,x,y,z,vel_x,vel_y,vel_z,mass):
+    def __init__(self,x,y,vel_x,vel_y,mass,z=0,vel_z=0):
         self.x = x
         self.y = y
         self.z = z
@@ -60,6 +60,7 @@ def step(body_list, dt):
         body_list[i].z += body_list[i].vel_z*dt
 
 def main():
+    b_a = 
     body_list = []
 
 
