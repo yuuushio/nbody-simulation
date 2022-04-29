@@ -7,6 +7,21 @@ class Vector:
     def get_vector(self):
         return [self.x, self.y, self.z]
 
+    def __add__(self, i, j):
+        if type(j) == Vector:
+            return Vector(i.x+j.x, i.y+j.y, i.z+j.z)
+        return Vector(i.x+j, i.y+j, i.z+j)
+
+    def __sub__(self, i, j):
+        if type(j) == Vector:
+            return Vector(i.x-j.x, i.y-j.y, i.z-j.z)
+        return Vector(i.x-j, i.y-j, i.z-j)
+    
+    def __mul__(self, i, j):
+        if type(j) == Vector:
+            return Vector(i.x*j.x, i.y*j.y, i.z*j.z)
+        return Vector(i.x*j, i.y*j, i.z*j)
+
 class Body_Builder:
     def __init__(self):
         # default values
@@ -89,3 +104,19 @@ class Body:
     @colour.setter
     def colour(self, c):
         self._colour = c
+
+    # Return string representation of the object for printing purposes
+    def __repr__(self):
+        return f"{self.position} {self.velocity} {self.mass}"
+
+# Separate calculation algorithms from the body-object class
+class Body_Mediator:
+    # Class that lets bodies comminicate with each other
+    def __init__(self):
+        pass
+    
+    # Returns thee x distance between the calling body and the argument body
+    def delta_position(self, inner_body: Body, outer: Body):
+        return [inner_body.position - outer.position]
+
+
