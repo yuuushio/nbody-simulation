@@ -9,7 +9,12 @@ class Vector:
 
 class Body_Builder:
     def __init__(self):
-        pass
+        # default values
+        self.positon_vector = [0, 0, 0]
+        self.velocity_vector = [0, 0, 0]
+        self.m = 1
+        self.r = 5
+        self.colour = (255, 0, 0)
     
     def pos_vec(self, vec: Vector):
         self.positon_vector = vec
