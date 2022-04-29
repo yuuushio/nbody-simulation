@@ -21,3 +21,22 @@ def n_day():
 
 def g_const():
     return (6.67e-11)
+
+def calc_distance(b_a, b_b):
+    dx = b_a.x - b_b.x
+    dy = b_a.y - b_b.y
+    dz = b_a.z - b_b.z
+    return np.sqrt(np.power(dx, 2) + np.power(dy, 2) + np.power(dz, 2))
+
+# Advances the simulation with time difference (dt)
+def step(body_list, dt):
+    for i in range(len(body_list)):
+        for j in range(len(body_list)):
+            distance = calc_distance(body_list[i], body_list[j])
+
+def main():
+    body_list = []
+
+
+if __name__ == "__main__":
+    main()
