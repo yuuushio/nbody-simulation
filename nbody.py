@@ -81,7 +81,6 @@ def main():
     b_d = Body(w//2-380, h//2, 1, 0, 15)
     b_e = Body(w//2+400, h//2, 2, 0, 17)
     body_list = [b_a,b_b,b_c,b_d,b_e]
-    speed=10
     pygame.init()
     screen = pygame.display.set_mode((w,h))
     pygame.display.set_caption("nbody")
@@ -96,7 +95,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT: running = False
         screen.fill(black)
-        step(body_list, 0.05)
+        step(body_list, 0.1)
         for b in body_list:
             pygame.draw.circle(screen, red, (int(b.x), (b.y)), 10)
         pygame.display.flip()
