@@ -30,6 +30,12 @@ class Vector:
             return Vector(self.x/other.x, self.y/other.y, self.z/other.z)
         return Vector(self.x/other, self.y/other, self.z/other)
 
+    def __repr__(self):
+        return f"{self.x}, {self.y}"
+
+    def __str__(self):
+        return f"{self.x}, {self.y}"
+
 class Builder:
     def __init__(self):
         # default values
@@ -147,7 +153,7 @@ class Body:
         if type(inner) != Body: raise TypeError
         dp = self.delta_position(inner) # Returns delta vector
         dist = self.distance(inner)
-        magnitude = (self.mass*inner.mass)/np.power(dist, 2)
+        magnitude = (6.67e-11*self.mass*inner.mass)/np.power(dist, 2)
         unit_vector = dp/dist
         force_vec = unit_vector*magnitude
         return force_vec
@@ -158,8 +164,8 @@ class Body:
         self.acceleration += a_vec
 
     # Draws the body using its current position and attributes
-    def draw(self, screen):
-        pygame.draw.circle(screen, self.colour, (self.position.x, self.position.y), self.radius)
+    def draw(self, screen, vec: Vector):
+        pygame.draw.circle(screen, self.colour, (vec.x, vec.y), self.radius)
 
     # Updates velocity and moves the body 
     def update(self, dt):
@@ -172,26 +178,73 @@ class Body:
         # Reset acceleration
         self.acceleration = Vector(0,0,0)
 
+def read_file(file):
+    with open(file) as f:
+        data = f.read()
+
+    # List of strings; each string contains the body's attributes
+    string_bodies = [b for b in data.split("\n")]
+    bodies = []
+    # Get individual attribute
+    for b in string_bodies:
+        atb = b.split(",") # Short for "attributes"
+        if len(atb) >= 5:
+            pv = Vector(float(atb[0]),float(atb[1]),float(atb[2]))
+            vv = Vector(float(atb[3]),float(atb[4]),float(atb[5]))
+            body = Builder().pos_vec(pv).vel_vector(vv).mass(float(atb[6])).build()
+            bodies.append(body)
+    return bodies
+
 
 def create_bodies(w, h):
-    body_a = Builder().pos_vec(Vector(w//2,h//2)).vel_vector(Vector(0,0)).mass(100000).build()
-    body_b = Builder().pos_vec(Vector(w//2+200,h//2)).vel_vector(Vector(0,25)).mass(1).build()
-    body_c = Builder().pos_vec(Vector(w//2-300,h//2)).vel_vector(Vector(0,15)).mass(1).build()
-    body_d = Builder().pos_vec(Vector(w//2-380,h//2)).vel_vector(Vector(0,15)).mass(1).build()
-    body_e = Builder().pos_vec(Vector(w//2+400,h//2)).vel_vector(Vector(0,17)).mass(2).build()
+    #body_a = Builder().pos_vec(Vector(w//2,h//2)).vel_vector(Vector(0,0)).mass(100000).build()
+    #body_b = Builder().pos_vec(Vector(w//2+200,h//2)).vel_vector(Vector(0,25)).mass(1).build()
+    #body_c = Builder().pos_vec(Vector(w//2-300,h//2)).vel_vector(Vector(0,15)).mass(1).build()
+    #body_d = Builder().pos_vec(Vector(w//2-380,h//2)).vel_vector(Vector(0,15)).mass(1).build()
+    #body_e = Builder().pos_vec(Vector(w//2+400,h//2)).vel_vector(Vector(0,17)).mass(2).build()
+    body_a = Builder().pos_vec(Vector(1.49600e+11,0.00000e+00)).vel_vector(Vector(0.00000e+00,2.98000e+04)).mass(5.97400e+24).build()
+    body_b = Builder().pos_vec(Vector(2.27900e+11,0.00000e+00)).vel_vector(Vector(0.00000e+00,2.41000e+04)).mass(6.41900e+23).build()
+    body_c = Builder().pos_vec(Vector(5.79000e+10,0.00000e+00)).vel_vector(Vector(0.00000e+00,4.79000e+04)).mass(3.30200e+23).build()
+    
+    body_d = Builder().pos_vec(Vector(0.00000e+00,0.00000e+00)).vel_vector(Vector(0.00000e+00,0.00000e+00)).mass(1.98900e+30).draw_radius(20).build()
+    body_e = Builder().pos_vec(Vector(1.08200e+11,0.00000e+00)).vel_vector(Vector(0.00000e+00,3.50000e+04)).mass(4.86900e+24).build()
+ 
     return [body_a,body_b,body_c,body_d,body_e]
 
+def get_x_y(bodies):
+	x = np.array([b.position.x for b in bodies])
+	y = np.array([b.position.y for b in bodies])
+	return x,y
+
+def scale(x_vals, y_vals):
+    normalized_vectors = []
+    scale = max(x_vals.max()-x_vals.min(), y_vals.max()-y_vals.min())
+    for i in range(len(x_vals)):
+        # use constant variable for each max to make it faster later
+        x = x_vals[i]
+        y = y_vals[i]
+        #x -= (x_vals.max()+x_vals.min())/2 
+        #y -= (y_vals.max()+y_vals.min())/2 
+        x = x/scale
+        y = y/scale
+        x *= 300
+        y *= 300
+        x += 1920//2
+        y += 1080//2
+        normalized_vectors.append(Vector(x,y))
+        for v in normalized_vectors: print(v)
+    return normalized_vectors
 
 def main():
     w = 1920
     h = 1080
     fps = 60
-    bodies = create_bodies(w, h)
+    bodies = read_file("test.txt")
     pygame.init()
     screen = pygame.display.set_mode((w,h))
     pygame.display.set_caption("nbody")
     clock = pygame.time.Clock()
-    dt = 0.1
+    dt = 30000
     run = True
     while run:
         clock.tick(fps)
@@ -205,7 +258,10 @@ def main():
                 if inner is not outer_b:
                     outer_b.update_acceleration(inner)
             outer_b.update(dt)
-            outer_b.draw(screen)
+        x,y = get_x_y(bodies)
+        nv = scale(x,y)
+        for i in range(len(bodies)):
+            bodies[i].draw(screen, nv[i])
 
         pygame.display.flip()
 
