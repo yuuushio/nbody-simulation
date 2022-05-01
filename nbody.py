@@ -164,39 +164,19 @@ class Body:
         self.acceleration += a_vec
 
     # Draws the body using its current position and attributes
-    def draw(self, screen, radius, mm_li, w, h):
+    def draw(self, screen, radius, w, h):
         x_max = radius
         x_min = -radius
         y_max = radius
         y_min = -radius
-        #x_scale = w/(x_max - x_min)
-        #y_scale = h/(y_max - y_min)
-        #print(x_scale, y_scale)
-
-        #current_x = self.position.x
-        #current_y = self.position.y
-        #xs = x_scale*(current_x-x_min)
-        #ys = y_scale * (current_y-y_min)
-        #ys = h - y_scale * (current_y-y_min)
-        #xs = round(xs-0.5, 3)
-        #ys = round(ys-0.5, 3)
 
         x_scale = 1/(x_max-x_min)
         y_scale = 1/(x_max-x_min)
         bounding_factor = min(w,h)//2
         xs = ((x_scale*(self.position.x-x_min))*bounding_factor)+w//2-bounding_factor//2
         ys = ((y_scale*(self.position.y-y_min))*bounding_factor)+h//2-bounding_factor//2
-        #print("ssssssssss",xs, ys)
 
-        #x_scale = y_scale = max(mm_li[0] - mm_li[1], mm_li[2] - mm_li[3])
-        #xs = (self.position.x-mm_li[1])/(mm_li[0]-mm_li[1])
-        #ys = (self.position.y-mm_li[3])/(mm_li[2]-mm_li[3])
-        #xs *= 373
-        #ys *= 210
-        #xs += 1920//2
-        #ys += 1080//2
-
-        pygame.draw.circle(screen, self.colour, (xs, ys), self.radius)
+        pygame.draw.circle(screen, self.colour, (xs-0.5, ys-0.5), self.radius)
 
     # Updates velocity and moves the body 
     def update(self, dt):
@@ -236,28 +216,10 @@ def get_min_max(bodies):
     yv = np.array([b.position.y for b in bodies])
     return [xv.max(), xv.min(), yv.max(), yv.min()]
 
-#def scale(x_vals, y_vals):
-#    normalized_vectors = []
-#    scale = max(x_vals.max()-x_vals.min(), y_vals.max()-y_vals.min())
-#    for i in range(len(x_vals)):
-#        # use constant variable for each max to make it faster later
-#        x = x_vals[i]
-#        y = y_vals[i]
-#        #x -= (x_vals.max()+x_vals.min())/2 
-#        #y -= (y_vals.max()+y_vals.min())/2 
-#        x = x/scale
-#        y = y/scale
-#        x *= 373
-#        y *= 210
-#        x += 1920//2
-#        y += 1080//2
-#        normalized_vectors.append(Vector(x,y))
-#        for v in normalized_vectors: print(v)
-#    return normalized_vectors
 
 def main():
-    w = 1920
-    h = 1080
+    w = 512
+    h = 512
     fps = 60
     bodies = read_file("test.txt")
     pygame.init()
@@ -281,8 +243,7 @@ def main():
             outer_b.update(dt)
         x,y = get_x_y(bodies)
         for i in range(len(bodies)):
-            max_min_li = get_min_max(bodies)
-            bodies[i].draw(screen, radius, max_min_li, w, h)
+            bodies[i].draw(screen, radius, w, h)
 
         pygame.display.flip()
 
