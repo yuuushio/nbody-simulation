@@ -176,7 +176,7 @@ class Body:
         xs = ((x_scale*(self.position.x-x_min))*bounding_factor)+w//2-bounding_factor//2
         ys = ((y_scale*(self.position.y-y_min))*bounding_factor)+h//2-bounding_factor//2
 
-        pygame.draw.circle(screen, self.colour, (xs-0.5, ys-0.5), self.radius)
+        pygame.draw.circle(screen, self.colour, (xs, ys), self.radius)
 
     # Updates velocity and moves the body 
     def update(self, dt):
@@ -206,17 +206,6 @@ def read_file(file):
             bodies.append(body)
     return bodies
 
-def get_x_y(bodies):
-	x = np.array([b.position.x for b in bodies])
-	y = np.array([b.position.y for b in bodies])
-	return x,y
-
-def get_min_max(bodies):
-    xv = np.array([b.position.x for b in bodies])
-    yv = np.array([b.position.y for b in bodies])
-    return [xv.max(), xv.min(), yv.max(), yv.min()]
-
-
 def main():
     w = 512
     h = 512
@@ -241,9 +230,7 @@ def main():
                 if inner is not outer_b:
                     outer_b.update_acceleration(inner)
             outer_b.update(dt)
-        x,y = get_x_y(bodies)
-        for i in range(len(bodies)):
-            bodies[i].draw(screen, radius, w, h)
+            outer_b.draw(screen, radius, w, h)
 
         pygame.display.flip()
 
