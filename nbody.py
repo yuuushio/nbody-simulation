@@ -164,13 +164,38 @@ class Body:
         self.acceleration += a_vec
 
     # Draws the body using its current position and attributes
-    def draw(self, screen, x_min, y_min, x_scale, y_scale):
-        current_x = self.position.x
-        current_y = self.position.y
-        xs = x_scale*(current_x-x_min)
-        ys = 512 - y_scale * (current_y-y_min)
-        xs = round(xs-0.5, 3)
-        ys = round(ys-0.5, 3)
+    def draw(self, screen, radius, mm_li, w, h):
+        x_max = radius
+        x_min = -radius
+        y_max = radius
+        y_min = -radius
+        #x_scale = w/(x_max - x_min)
+        #y_scale = h/(y_max - y_min)
+        #print(x_scale, y_scale)
+
+        #current_x = self.position.x
+        #current_y = self.position.y
+        #xs = x_scale*(current_x-x_min)
+        #ys = y_scale * (current_y-y_min)
+        #ys = h - y_scale * (current_y-y_min)
+        #xs = round(xs-0.5, 3)
+        #ys = round(ys-0.5, 3)
+
+        x_scale = 1/(x_max-x_min)
+        y_scale = 1/(x_max-x_min)
+        bounding_factor = min(w,h)//2
+        xs = ((x_scale*(self.position.x-x_min))*bounding_factor)+w//2-bounding_factor//2
+        ys = ((y_scale*(self.position.y-y_min))*bounding_factor)+h//2-bounding_factor//2
+        #print("ssssssssss",xs, ys)
+
+        #x_scale = y_scale = max(mm_li[0] - mm_li[1], mm_li[2] - mm_li[3])
+        #xs = (self.position.x-mm_li[1])/(mm_li[0]-mm_li[1])
+        #ys = (self.position.y-mm_li[3])/(mm_li[2]-mm_li[3])
+        #xs *= 373
+        #ys *= 210
+        #xs += 1920//2
+        #ys += 1080//2
+
         pygame.draw.circle(screen, self.colour, (xs, ys), self.radius)
 
     # Updates velocity and moves the body 
@@ -201,21 +226,15 @@ def read_file(file):
             bodies.append(body)
     return bodies
 
-
-def create_bodies(w, h):
-    #body_a = Builder().pos_vec(Vector(w//2,h//2)).vel_vector(Vector(0,0)).mass(100000).build()
-    #body_b = Builder().pos_vec(Vector(w//2+200,h//2)).vel_vector(Vector(0,25)).mass(1).build()
-    #body_c = Builder().pos_vec(Vector(w//2-300,h//2)).vel_vector(Vector(0,15)).mass(1).build()
-    #body_d = Builder().pos_vec(Vector(w//2-380,h//2)).vel_vector(Vector(0,15)).mass(1).build()
-    #body_e = Builder().pos_vec(Vector(w//2+400,h//2)).vel_vector(Vector(0,17)).mass(2).build()
-    pass
-
 def get_x_y(bodies):
 	x = np.array([b.position.x for b in bodies])
 	y = np.array([b.position.y for b in bodies])
 	return x,y
 
-
+def get_min_max(bodies):
+    xv = np.array([b.position.x for b in bodies])
+    yv = np.array([b.position.y for b in bodies])
+    return [xv.max(), xv.min(), yv.max(), yv.min()]
 
 #def scale(x_vals, y_vals):
 #    normalized_vectors = []
@@ -236,16 +255,6 @@ def get_x_y(bodies):
 #        for v in normalized_vectors: print(v)
 #    return normalized_vectors
 
-def set_scale():
-    radius = 2.50e+11
-    x_max = radius
-    x_min = -radius
-    y_max = radius
-    y_min = -radius
-    x_scale = 512/(x_max - x_min)
-    y_scale = 512/(y_max - y_min)
-    return x_min, y_min, x_scale, y_scale
-
 def main():
     w = 1920
     h = 1080
@@ -255,8 +264,9 @@ def main():
     screen = pygame.display.set_mode((w,h))
     pygame.display.set_caption("nbody")
     clock = pygame.time.Clock()
-    dt = 25000
+    dt = 20000
     run = True
+    radius = 2.50e+11
     while run:
         clock.tick(fps)
         for event in pygame.event.get():
@@ -270,9 +280,9 @@ def main():
                     outer_b.update_acceleration(inner)
             outer_b.update(dt)
         x,y = get_x_y(bodies)
-        x_min, y_min, x_scale, y_scale = set_scale()
         for i in range(len(bodies)):
-            bodies[i].draw(screen, x_min, y_min, x_scale, y_scale)
+            max_min_li = get_min_max(bodies)
+            bodies[i].draw(screen, radius, max_min_li, w, h)
 
         pygame.display.flip()
 
