@@ -153,6 +153,7 @@ class Body:
         if type(inner) != Body: raise TypeError
         dp = self.delta_position(inner) # Returns delta vector
         dist = self.distance(inner)
+        if dist == 0: dist = 1
         magnitude = (6.67e-11*self.mass*inner.mass)/np.power(dist, 2)
         unit_vector = dp/dist
         force_vec = unit_vector*magnitude
@@ -171,7 +172,7 @@ class Body:
         y_min = -radius
 
         x_scale = 1/(x_max-x_min)
-        y_scale = 1/(x_max-x_min)
+        y_scale = 1/(y_max-x_min)
         bounding_factor = min(w,h)//2
         xs = ((x_scale*(self.position.x-x_min))*bounding_factor)+w//2-bounding_factor//2
         ys = ((y_scale*(self.position.y-y_min))*bounding_factor)+h//2-bounding_factor//2
@@ -207,8 +208,8 @@ def read_file(file):
     return bodies
 
 def main():
-    w = 512
-    h = 512
+    w = 200
+    h = 200
     fps = 60
     bodies = read_file("test.txt")
     pygame.init()
