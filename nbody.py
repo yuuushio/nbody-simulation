@@ -194,7 +194,7 @@ class Body:
     # Updates velocity using the net acceration and dt
     def update_velocity(self, dt):
         self.velocity += self.acceleration*dt
-        # Reset acceleration
+        # Reset acceleration after each full iteration
         self.acceleration = Vector(0,0,0)
 
 def read_file(file):
@@ -227,8 +227,9 @@ def read_file(file):
     for b in bodies:
         mass_v_index[b.mass] = i
         i += 1
-
-    largest_body_radius = 16
+    
+    # Draw radius to assign to the body with the largest mass
+    largest_body_radius = 10
     mass_list = np.array(mass_list)
     # Sort np list in descending order
     sorted_mass = -np.sort(-mass_list)
@@ -238,7 +239,7 @@ def read_file(file):
             # Give the heightest mass the biggest radius
             # Tho, it wouldnt be good when all the masses are about the same
             bodies[mass_v_index[sorted_mass[j]]].radius = largest_body_radius
-        elif (rem_percent/100)*20 >= 4:
+        elif (rem_percent/100)*20 >= 3:
             new_r = int((rem_percent/100)*largest_body_radius)
             bodies[mass_v_index[sorted_mass[j]]].radius = new_r
             rem_percent -= minus_val
