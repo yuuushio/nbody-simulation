@@ -205,8 +205,8 @@ def assign_draw_radius(builder_list, mass_list, largest_draw_r):
     # Calculate body radius based on/as a percentage of the largest body
     for i in range(len(builder_list)):
         # If % of body vs largest body is less than 3, just assign the body a radius of 3
-        if (np_mass_list[i]/mass_max)*largest_draw_r < 3:
-            body = builder_list[i].draw_radius(3).build()
+        if (np_mass_list[i]/mass_max)*largest_draw_r < 4:
+            body = builder_list[i].draw_radius(4).build()
             bodies.append(body)
         else:
             new_r = int((np_mass_list[i]/mass_max)*largest_draw_r) 
@@ -240,19 +240,25 @@ def read_file(file, radius_cap):
 
     return bodies
 
+# TODO: implement a function read a file with different form of data
+
+# TODO: take out main simulation logic out of main loop and use an object for it: a "build-space object or smt which the user can init with w,h,timestep,cap,screencolour"
+
 def main():
     w = 1920
     h = 1080
     fps = 60
-    radius_cap = 10
+    radius_cap = 10 # Choose a certain max draw radius
     bodies = read_file("test.txt", radius_cap)
     pygame.init()
     screen = pygame.display.set_mode((w,h))
     pygame.display.set_caption("nbody")
     clock = pygame.time.Clock()
-    dt = 20000
+    dt = 20000 # Time step
     run = True
-    radius = 2.50e+11
+    radius = 2.50e+11 # Universe radius
+
+    # Game loop
     while run:
         clock.tick(fps)
         for event in pygame.event.get():
