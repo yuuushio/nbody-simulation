@@ -197,19 +197,46 @@ def read_file(file):
     # List of strings; each string contains the body's attributes
     string_bodies = [b for b in data.split("\n")]
     bodies = []
+    mass_list = []
     # Get individual attribute
     for b in string_bodies:
         atb = b.split(",") # Short for "attributes"
+        
         if len(atb) >= 5:
             pv = Vector(float(atb[0]),float(atb[1]),float(atb[2]))
             vv = Vector(float(atb[3]),float(atb[4]),float(atb[5]))
             body = Builder().pos_vec(pv).vel_vector(vv).mass(float(atb[6])).build()
+            mass_list.append(body.mass)
             bodies.append(body)
+    
+    rem_percent = 80
+    minus_val = 5
+    mass_v_index = {}
+    i = 0
+    for b in bodies:
+        mass_v_index[b.mass] = i
+        i += 1
+
+    mass_list = np.array(mass_list)
+    max_mass = mass_list.max()
+    min_mass = mass_list.min()
+    sorted_mass = -np.sort(-mass_list)
+
+    for j in range(len(bodies)):
+        if j == 0:
+            bodies[mass_v_index[sorted_mass[j]]].radius = 20
+        elif (rem_percent/100)*20 >= 4:
+            new_r = int((rem_percent/100)*20)
+            bodies[mass_v_index[sorted_mass[j]]].radius = new_r
+            rem_percent -= minus_val
+        else:
+            bodies[mass_v_index[sorted_mass[j]]].radius = 4
+
     return bodies
 
 def main():
-    w = 200
-    h = 200
+    w = 1920
+    h = 1080
     fps = 60
     bodies = read_file("test.txt")
     pygame.init()
