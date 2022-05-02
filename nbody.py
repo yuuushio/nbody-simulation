@@ -197,14 +197,33 @@ class Body:
         # Reset acceleration after each full iteration
         self.acceleration = Vector(0,0,0)
 
-def read_file(file):
+# External method used to calculate and apply radius using the builder, and build the body 
+def assign_draw_radius(builder_list, mass_list, largest_draw_r):
+    np_mass_list = np.array(mass_list)
+    mass_max = np_mass_list.max()
+    bodies = []
+    # Calculate body radius based on/as a percentage of the largest body
+    for i in range(len(builder_list)):
+        # If % of body vs largest body is less than 3, just assign the body a radius of 3
+        if (np_mass_list[i]/mass_max)*largest_draw_r < 3:
+            body = builder_list[i].radius(3).build()
+            bodies.append(body)
+        else:
+            new_r = int((np_mass_list[i]/mass_max)*largest_draw_r) 
+            body = builder_list[i].radius(new_r).build()
+            bodies.append(body)
+    return bodies
+
+
+def read_file(file, radius_cap):
     with open(file) as f:
         data = f.read()
 
     # List of strings; each string contains the body's attributes
     string_bodies = [b for b in data.split("\n")]
-    bodies = []
+    builder_list = []
     mass_list = []
+
     # Get individual attribute
     for b in string_bodies:
         atb = b.split(",") # Short for "attributes"
@@ -212,40 +231,11 @@ def read_file(file):
         if len(atb) >= 5:
             pv = Vector(float(atb[0]),float(atb[1]),float(atb[2]))
             vv = Vector(float(atb[3]),float(atb[4]),float(atb[5]))
-            body = Builder().pos_vec(pv).vel_vector(vv).mass(float(atb[6])).build()
-            mass_list.append(body.mass)
-            bodies.append(body)
-    
-    # Fix later - not so object oriented and made up of a lot of constants
-    rem_percent = 80
-    minus_val = 10
-    mass_v_index = {}
-    i = 0
-
-    # Create mass dict with index as its value so that it can be referenced from
-    # sorted mass-list laster
-    for b in bodies:
-        mass_v_index[b.mass] = i
-        i += 1
-    
-    # Draw radius to assign to the body with the largest mass
-    largest_body_radius = 10
-    mass_list = np.array(mass_list)
-    # Sort np list in descending order
-    sorted_mass = -np.sort(-mass_list)
-
-    for j in range(len(bodies)):
-        if j == 0:
-            # Give the heightest mass the biggest radius
-            # Tho, it wouldnt be good when all the masses are about the same
-            bodies[mass_v_index[sorted_mass[j]]].radius = largest_body_radius
-        elif (rem_percent/100)*20 >= 3:
-            new_r = int((rem_percent/100)*largest_body_radius)
-            bodies[mass_v_index[sorted_mass[j]]].radius = new_r
-            rem_percent -= minus_val
-        else:
-            # Remaining bodies should have a radius of at least 3
-            bodies[mass_v_index[sorted_mass[j]]].radius = 3
+            # Append body builder to builder_list
+            builder_list.append(Builder().pos_vec(pv).vel_vector(vv).mass(float(atb[6])))
+            # Append corressponding mass right after so we can use the same index to reference same entity
+            mass_list.append(float(atb[6]))
+    bodies = assign_draw_radius(builder_list, mass_list, radius_cap) 
 
     return bodies
 
@@ -253,7 +243,8 @@ def main():
     w = 1920
     h = 1080
     fps = 60
-    bodies = read_file("test.txt")
+    radius_cap = 10
+    bodies = read_file("test.txt", radius_cap)
     pygame.init()
     screen = pygame.display.set_mode((w,h))
     pygame.display.set_caption("nbody")
