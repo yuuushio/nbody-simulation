@@ -1,0 +1,15 @@
+10
+12.000e11
+1e32 1.000e11 0 0 129132.5 sun.gif
+1e32 -1.000e11 0 0 -129132.5 sun.gif
+1e26 2.828e11 2.828e11 100000 -100000 earth.gif
+1e26 2.828e11 -2.828e11 -100000 -100000 earth.gif
+1e26 -2.828e11 -2.828e11 -100000 100000 earth.gif
+1e26 -2.828e11 2.828e11 100000 100000 earth.gif
+1e24 9.000e11 0 0 97500 mars.gif
+1e24 -9.000e11 0 0 -97500 mars.gif
+1e24 0.000 9e11 -97500 0 mars.gif
+1e24 0.000 -9e11 97500 0 mars.gif
+
+Creator of universe: Rohan Kapadia, COS 126, Spring 2004
+10 dancing bodies

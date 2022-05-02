@@ -165,7 +165,7 @@ class Body:
         self.acceleration += a_vec
 
     # Draws the body using its current position and attributes
-    def draw(self, screen, radius, w, h):
+    def draw(self, screen, radius, w, h, squeeze):
         # Calculate scale to fit x,y coordinates within screen resolution
         x_max = radius
         x_min = -radius
@@ -177,7 +177,7 @@ class Body:
         # Size of the universe itself - bound to a certain resolution. 
         # Smaller than the specified resolution for visualization purposes.
         # Also determines how "spread" out the bodies are on x,y axes
-        bounding_factor = min(w,h)//2
+        bounding_factor = min(w,h)//squeeze
 
         # + w/h // 2 - bounding_factor//2 is the formula used to center the universe in the main
         # window/resoultion
@@ -206,7 +206,7 @@ def assign_draw_radius(builder_list, mass_list, largest_draw_r):
     for i in range(len(builder_list)):
         # If % of body vs largest body is less than 3, just assign the body a radius of 3
         if (np_mass_list[i]/mass_max)*largest_draw_r < 4:
-            body = builder_list[i].draw_radius(4).build()
+            body = builder_list[i].draw_radius(3).build()
             bodies.append(body)
         else:
             new_r = int((np_mass_list[i]/mass_max)*largest_draw_r) 
@@ -241,6 +241,33 @@ def read_file(file, radius_cap):
     return bodies
 
 # TODO: implement a function read a file with different form of data
+# New test data in the form of:
+# <num-bodies>
+# <universe-radius>
+# m px py vx vy
+def read_file_2d(file, radius_cap):
+    with open(file) as f:
+        data = f.read()
+    
+    string_bodies = [d for d in data.split("\n")]
+    universe_radius = string_bodies[1]
+    print(string_bodies[2:])
+    builder_list = []
+    mass_list = []
+    for b in string_bodies[2:]:
+        # NOTE: fails when there are multiple spaces between the attributes
+        atb = b.split(" ") # Short for "attributes"
+        
+        if len(atb) >= 4:
+            pv = Vector(float(atb[1]),float(atb[2]))
+            vv = Vector(float(atb[3]),float(atb[4]))
+            # Append body builder to builder_list
+            builder_list.append(Builder().pos_vec(pv).vel_vector(vv).mass(float(atb[0])))
+            # Append corressponding mass right after so we can use the same index to reference same entity
+            mass_list.append(float(atb[0]))
+    bodies = assign_draw_radius(builder_list, mass_list, radius_cap) 
+
+    return bodies, float(universe_radius)
 
 # TODO: take out main simulation logic out of main loop and use an object for it: a "build-space object or smt which the user can init with w,h,timestep,cap,screencolour"
 
@@ -248,15 +275,18 @@ def main():
     w = 1920
     h = 1080
     fps = 60
-    radius_cap = 10 # Choose a certain max draw radius
-    bodies = read_file("test.txt", radius_cap)
+    radius_cap = 6# Choose a certain max draw radius
+    #bodies = read_file("test.txt", radius_cap)
+    radius = 2.50e+11 # Universe radius
+    bodies, universe_radius = read_file_2d("data/uniform100.txt", radius_cap)
     pygame.init()
     screen = pygame.display.set_mode((w,h))
     pygame.display.set_caption("nbody")
     clock = pygame.time.Clock()
-    dt = 20000 # Time step
+    # Time step
+    dt = 100000 
     run = True
-    radius = 2.50e+11 # Universe radius
+    squeeze = 2
 
     # Game loop
     while run:
@@ -271,7 +301,7 @@ def main():
                 if inner is not outer_b:
                     outer_b.update_acceleration(inner)
             outer_b.update(dt)
-            outer_b.draw(screen, radius, w, h)
+            outer_b.draw(screen, universe_radius, w, h, squeeze)
 
         pygame.display.flip()
 

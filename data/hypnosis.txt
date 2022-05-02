@@ -1,0 +1,11 @@
+5
+2.50e11
+1.989e30 0.000e00 0.000e00 0.000e00 0.000e00 sun.gif
+5.974e24 1.496e11 0.000e00 0.000e00 2.980e04 earth.gif
+5.974e24 -1.496e11 0.000e00 0.000e00 2.980e04 earth.gif
+5.974e24 0.000e00 1.496e11 2.980e04 0.000e00 earth.gif
+5.974e24 0.000e00 -1.496e11 2.980e04 0.000e00 earth.gif
+
+Creator of universe: Katie Smith, COS 126, Spring 2004
+
+I find this arrangement rather hypnotic.
