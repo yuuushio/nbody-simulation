@@ -166,14 +166,21 @@ class Body:
 
     # Draws the body using its current position and attributes
     def draw(self, screen, radius, w, h):
+        # Calculate scale to fit x,y coordinates within screen resolution
         x_max = radius
         x_min = -radius
         y_max = radius
         y_min = -radius
-
         x_scale = 1/(x_max-x_min)
         y_scale = 1/(y_max-x_min)
+
+        # Size of the universe itself - bound to a certain resolution. 
+        # Smaller than the specified resolution for visualization purposes.
+        # Also determines how "spread" out the bodies are on x,y axes
         bounding_factor = min(w,h)//2
+
+        # + w/h // 2 - bounding_factor//2 is the formula used to center the universe in the main
+        # window/resoultion
         xs = ((x_scale*(self.position.x-x_min))*bounding_factor)+w//2-bounding_factor//2
         ys = ((y_scale*(self.position.y-y_min))*bounding_factor)+h//2-bounding_factor//2
 
@@ -209,28 +216,35 @@ def read_file(file):
             mass_list.append(body.mass)
             bodies.append(body)
     
+    # Fix later - not so object oriented and made up of a lot of constants
     rem_percent = 80
-    minus_val = 5
+    minus_val = 10
     mass_v_index = {}
     i = 0
+
+    # Create mass dict with index as its value so that it can be referenced from
+    # sorted mass-list laster
     for b in bodies:
         mass_v_index[b.mass] = i
         i += 1
 
+    largest_body_radius = 16
     mass_list = np.array(mass_list)
-    max_mass = mass_list.max()
-    min_mass = mass_list.min()
+    # Sort np list in descending order
     sorted_mass = -np.sort(-mass_list)
 
     for j in range(len(bodies)):
         if j == 0:
-            bodies[mass_v_index[sorted_mass[j]]].radius = 20
+            # Give the heightest mass the biggest radius
+            # Tho, it wouldnt be good when all the masses are about the same
+            bodies[mass_v_index[sorted_mass[j]]].radius = largest_body_radius
         elif (rem_percent/100)*20 >= 4:
-            new_r = int((rem_percent/100)*20)
+            new_r = int((rem_percent/100)*largest_body_radius)
             bodies[mass_v_index[sorted_mass[j]]].radius = new_r
             rem_percent -= minus_val
         else:
-            bodies[mass_v_index[sorted_mass[j]]].radius = 4
+            # Remaining bodies should have a radius of at least 3
+            bodies[mass_v_index[sorted_mass[j]]].radius = 3
 
     return bodies
 
