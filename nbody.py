@@ -44,7 +44,7 @@ class Builder:
         self.accel_vector = Vector(0,0,0)
         self.m = 1
         self.r = 5
-        self.colour = (255, 0, 0)
+        self.colour = (201, 203, 255)
     
     def pos_vec(self, vec: Vector):
         self.positon_vector = vec
@@ -206,11 +206,12 @@ def assign_draw_radius(builder_list, mass_list, largest_draw_r):
     for i in range(len(builder_list)):
         # If % of body vs largest body is less than 3, just assign the body a radius of 3
         if (np_mass_list[i]/mass_max)*largest_draw_r < 3:
-            body = builder_list[i].radius(3).build()
+            body = builder_list[i].draw_radius(3).build()
             bodies.append(body)
         else:
             new_r = int((np_mass_list[i]/mass_max)*largest_draw_r) 
-            body = builder_list[i].radius(new_r).build()
+            # Also assign the body with the highest mass a distinctive colour
+            body = builder_list[i].draw_radius(new_r).col((242,143,173)).build()
             bodies.append(body)
     return bodies
 
@@ -257,7 +258,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT: run = False
 
-        screen.fill((0,0,0))
+        screen.fill((22, 19, 32))
 
         for outer_b in bodies:
             for inner in bodies:
