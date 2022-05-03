@@ -241,35 +241,52 @@ def read_file(file, radius_cap):
 
     return bodies
 
-# New test data in the form of:
-# <num-bodies>
-# <universe-radius>
-# m x y vx vy
-def read_file_2d(file, radius_cap):
-    with open(file) as f:
-        data = f.read()
-    
-    string_bodies = [d for d in data.split("\n")]
-    universe_radius = string_bodies[1]
-    print(string_bodies[2:])
-    builder_list = []
-    mass_list = []
-    for b in string_bodies[2:]:
-        # NOTE: fails when there are multiple spaces between the attributes
-        atb = b.split(" ") # Short for "attributes"
-        
-        if len(atb) >= 4:
-            pv = Vector(float(atb[1]),float(atb[2]))
-            vv = Vector(float(atb[3]),float(atb[4]))
-            # Append body builder to builder_list
-            builder_list.append(Builder().pos_vec(pv).vel_vector(vv).mass(float(atb[0])))
-            # Append corressponding mass right after so we can use the same index to reference same entity
-            mass_list.append(float(atb[0]))
-    bodies = assign_draw_radius(builder_list, mass_list, radius_cap) 
-
-    return bodies, float(universe_radius)
 
 # TODO: take out main simulation logic out of main loop and use an object for it: a "build-space object or smt which the user can init with w,h,timestep,cap,screencolour"
+
+class Simulation:
+    def __init__(self, w, h, step):
+        pass
+    
+    @property
+    def max_draw_radius(self):
+        return self.draw_radius
+
+    @max_draw_radius.setter
+    def max_draw_radius(self, r):
+        self.draw_radius = r
+
+    def parse_file(self, file):
+    # New test data in the form of:
+    # <num-bodies>
+    # <universe-radius>
+    # m x y vx vy
+        with open(file) as f:
+            data = f.read()
+        
+        string_bodies = [d for d in data.split("\n")]
+        # TODO: if radius isnt provided, use default. impl logic to deal 
+        universe_radius = string_bodies[1]
+        print(string_bodies[2:])
+        builder_list = []
+        mass_list = []
+        for b in string_bodies[2:]:
+            # NOTE: fails when there are multiple spaces between the attributes
+            atb = b.split(" ") # Short for "attributes"
+            
+            if len(atb) >= 4:
+                pv = Vector(float(atb[1]),float(atb[2]))
+                vv = Vector(float(atb[3]),float(atb[4]))
+                # Append body builder to builder_list
+                builder_list.append(Builder().pos_vec(pv).vel_vector(vv).mass(float(atb[0])))
+                # Append corressponding mass right after so we can use the same index to reference same entity
+                mass_list.append(float(atb[0]))
+        bodies = assign_draw_radius(builder_list, mass_list, radius_cap) 
+    
+        return bodies, float(universe_radius)
+
+    def simulate(self):
+        pass
 
 def main():
     w = 1920
@@ -286,6 +303,7 @@ def main():
     # Time step
     dt = 100000 
     run = True
+    # Higher the number the more squeezed the universe will appear in the screen
     squeeze = 2
 
     # Game loop
