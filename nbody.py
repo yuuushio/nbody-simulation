@@ -198,54 +198,23 @@ class Body:
         # Reset acceleration after each full iteration
         self.acceleration = Vector(0,0,0)
 
-# External method used to calculate and apply radius using the builder, and build the body 
-def assign_draw_radius(builder_list, mass_list, largest_draw_r):
-    np_mass_list = np.array(mass_list)
-    mass_max = np_mass_list.max()
-    bodies = []
-    # Calculate body radius based on/as a percentage of the largest body
-    for i in range(len(builder_list)):
-        # If % of body vs largest body is less than 3, just assign the body a radius of 3
-        if (np_mass_list[i]/mass_max)*largest_draw_r < 4:
-            body = builder_list[i].draw_radius(3).build()
-            bodies.append(body)
-        else:
-            new_r = int((np_mass_list[i]/mass_max)*largest_draw_r) 
-            # Also assign the body with the highest mass a distinctive colour
-            body = builder_list[i].draw_radius(new_r).col((242,143,173)).build()
-            bodies.append(body)
-    return bodies
 
-
-def read_file(file, radius_cap):
-    with open(file) as f:
-        data = f.read()
-
-    # List of strings; each string contains the body's attributes
-    string_bodies = [b for b in data.split("\n")]
-    builder_list = []
-    mass_list = []
-
-    # Get individual attribute
-    for b in string_bodies:
-        atb = b.split(",") # Short for "attributes"
-        
-        if len(atb) >= 5:
-            pv = Vector(float(atb[0]),float(atb[1]),float(atb[2]))
-            vv = Vector(float(atb[3]),float(atb[4]),float(atb[5]))
-            # Append body builder to builder_list
-            builder_list.append(Builder().pos_vec(pv).vel_vector(vv).mass(float(atb[6])))
-            # Append corressponding mass right after so we can use the same index to reference same entity
-            mass_list.append(float(atb[6]))
-    bodies = assign_draw_radius(builder_list, mass_list, radius_cap) 
-
-    return bodies
 
 
 # TODO: take out main simulation logic out of main loop and use an object for it: a "build-space object or smt which the user can init with w,h,timestep,cap,screencolour"
 
 class Simulation:
     def __init__(self, w, h, step):
+        # Ideally provided in command line arguments, therefore no need to 
+        # add them as a property
+        self.w = w
+        self.h = h
+        self.timestep = step
+        # Set default fps to 60
+        self.fps = 60
+        # Set a default universe radius-can be changed when parsing file
+        self.universe_radius = 2.50e+11 
+        self.bodies = []
         pass
     
     @property
@@ -255,6 +224,24 @@ class Simulation:
     @max_draw_radius.setter
     def max_draw_radius(self, r):
         self.draw_radius = r
+
+    # External method used to calculate and apply radius using the builder, and build the body 
+    def assign_draw_radius(self,builder_list, mass_list, largest_draw_r):
+        np_mass_list = np.array(mass_list)
+        mass_max = np_mass_list.max()
+        bodies_tmp = []
+        # Calculate body radius based on/as a percentage of the largest body
+        for i in range(len(builder_list)):
+            # If % of body vs largest body is less than 3, just assign the body a radius of 3
+            if (np_mass_list[i]/mass_max)*largest_draw_r < 4:
+                body = builder_list[i].draw_radius(3).build()
+                bodies_tmp.append(body)
+            else:
+                new_r = int((np_mass_list[i]/mass_max)*largest_draw_r) 
+                # Also assign the body with the highest mass a distinctive colour
+                body = builder_list[i].draw_radius(new_r).col((242,143,173)).build()
+                bodies_tmp.append(body)
+        return bodies_tmp
 
     def parse_file(self, file):
     # New test data in the form of:
@@ -266,7 +253,8 @@ class Simulation:
         
         string_bodies = [d for d in data.split("\n")]
         # TODO: if radius isnt provided, use default. impl logic to deal 
-        universe_radius = string_bodies[1]
+        # Use radius from file if provided 
+        self.universe_radius = float(string_bodies[1])
         print(string_bodies[2:])
         builder_list = []
         mass_list = []
@@ -281,12 +269,59 @@ class Simulation:
                 builder_list.append(Builder().pos_vec(pv).vel_vector(vv).mass(float(atb[0])))
                 # Append corressponding mass right after so we can use the same index to reference same entity
                 mass_list.append(float(atb[0]))
-        bodies = assign_draw_radius(builder_list, mass_list, radius_cap) 
-    
-        return bodies, float(universe_radius)
+        self.bodies = self.assign_draw_radius(builder_list, mass_list, self.max_draw_radius) 
+
+
+    # Can impl later with z coordinates for value/calculation output purposes
+    #def prase_z_coordinate(self, file):
+    #    with open(file) as f:
+    #        data = f.read()
+    #
+    #    # List of strings; each string contains the body's attributes
+    #    string_bodies = [b for b in data.split("\n")]
+    #    builder_list = []
+    #    mass_list = []
+    #
+    #    # Get individual attribute
+    #    for b in string_bodies:
+    #        atb = b.split(",") # Short for "attributes"
+    #        
+    #        if len(atb) >= 5:
+    #            pv = Vector(float(atb[0]),float(atb[1]),float(atb[2]))
+    #            vv = Vector(float(atb[3]),float(atb[4]),float(atb[5]))
+    #            # Append body builder to builder_list
+    #            builder_list.append(Builder().pos_vec(pv).vel_vector(vv).mass(float(atb[6])))
+    #            # Append corressponding mass right after so we can use the same index to reference same entity
+    #            mass_list.append(float(atb[6]))
+    #    bodies = self.assign_draw_radius(builder_list, mass_list, self.max_draw_radius) 
+
+    #    return bodies
 
     def simulate(self):
-        pass
+        pygame.init()
+        screen = pygame.display.set_mode((self.w, self.h))
+        pygame.display.set_caption("nbody")
+        clock = pygame.time.Clock()
+        run = True
+        # Higher the number the more squeezed the universe will appear in the screen
+        squeeze = 2
+    
+        # Game loop
+        while run:
+            clock.tick(self.fps)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: run = False
+    
+            screen.fill((22, 19, 32))
+    
+            for outer_b in self.bodies:
+                for inner in self.bodies:
+                    if inner is not outer_b:
+                        outer_b.update_acceleration(inner)
+                outer_b.update(self.timestep)
+                outer_b.draw(screen, self.universe_radius, self.w, self.h, squeeze)
+    
+            pygame.display.flip()
 
 def main():
     w = 1920
@@ -294,34 +329,8 @@ def main():
     fps = 60
     radius_cap = 6# Choose a certain max draw radius
     #bodies = read_file("test.txt", radius_cap)
-    radius = 2.50e+11 # Universe radius
-    bodies, universe_radius = read_file_2d("data/uniform100.txt", radius_cap)
-    pygame.init()
-    screen = pygame.display.set_mode((w,h))
-    pygame.display.set_caption("nbody")
-    clock = pygame.time.Clock()
-    # Time step
-    dt = 100000 
-    run = True
-    # Higher the number the more squeezed the universe will appear in the screen
-    squeeze = 2
-
-    # Game loop
-    while run:
-        clock.tick(fps)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT: run = False
-
-        screen.fill((22, 19, 32))
-
-        for outer_b in bodies:
-            for inner in bodies:
-                if inner is not outer_b:
-                    outer_b.update_acceleration(inner)
-            outer_b.update(dt)
-            outer_b.draw(screen, universe_radius, w, h, squeeze)
-
-        pygame.display.flip()
+    
+    sim = Simulation(w, h, 20000)
 
 
 if __name__ == "__main__":
