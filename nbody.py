@@ -215,6 +215,7 @@ class Simulation:
         # Set a default universe radius-can be changed when parsing file
         self.universe_radius = 2.50e+11 
         self.bodies = []
+        self.draw_radius = 10
         pass
     
     @property
@@ -331,6 +332,9 @@ def main():
     #bodies = read_file("test.txt", radius_cap)
     
     sim = Simulation(w, h, 20000)
+    sim.draw_radius = radius_cap
+    sim.parse_file("data/8star-rotation.txt")
+    sim.simulate()
 
 
 if __name__ == "__main__":
