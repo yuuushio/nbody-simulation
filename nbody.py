@@ -271,30 +271,6 @@ class Simulation:
 
 
     # Can impl later with z coordinates for value/calculation output purposes
-    #def prase_z_coordinate(self, file):
-    #    with open(file) as f:
-    #        data = f.read()
-    #
-    #    # List of strings; each string contains the body's attributes
-    #    string_bodies = [b for b in data.split("\n")]
-    #    builder_list = []
-    #    mass_list = []
-    #
-    #    # Get individual attribute
-    #    for b in string_bodies:
-    #        atb = b.split(",") # Short for "attributes"
-    #        
-    #        if len(atb) >= 5:
-    #            pv = Vector(float(atb[0]),float(atb[1]),float(atb[2]))
-    #            vv = Vector(float(atb[3]),float(atb[4]),float(atb[5]))
-    #            # Append body builder to builder_list
-    #            builder_list.append(Builder().pos_vec(pv).vel_vector(vv).mass(float(atb[6])))
-    #            # Append corressponding mass right after so we can use the same index to reference same entity
-    #            mass_list.append(float(atb[6]))
-    #    bodies = self.assign_draw_radius(builder_list, mass_list, self.max_draw_radius) 
-
-    #    return bodies
-
     def simulate(self):
         pygame.init()
         screen = pygame.display.set_mode((self.w, self.h))
