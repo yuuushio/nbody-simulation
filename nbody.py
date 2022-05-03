@@ -13,18 +13,18 @@ class Vector:
 
     def __add__(self, other):
         if type(other) == Vector:
-            return Vector(self.x+other.x, self.y+other.y, self.z+other.z)
-        return Vector(self.x+other, self.y+other, self.z+other)
+            return Vector(self.x + other.x, self.y + other.y, self.z + other.z)
+        return Vector(self.x + other, self.y + other, self.z + other)
 
     def __sub__(self, other):
         if type(other) == Vector:
-            return Vector(self.x-other.x, self.y-other.y, self.z-other.z)
-        return Vector(self.x-other, self.y-other, self.z-other)
+            return Vector(self.x - other.x, self.y - other.y, self.z - other.z)
+        return Vector(self.x - other, self.y - other, self.z - other)
     
     def __mul__(self, other):
         if type(other) == Vector:
-            return Vector(self.x*other.x, self.y*other.y, self.z*other.z)
-        return Vector(self.x*other, self.y*other, self.z*other)
+            return Vector(self.x * other.x, self.y * other.y, self.z * other.z)
+        return Vector(self.x * other, self.y * other, self.z * other)
 
     # Doesn't handle division by 0
     def __truediv__(self, other):
