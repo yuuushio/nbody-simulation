@@ -138,7 +138,7 @@ class Body:
     # Where inner is the j'th body in the inner for loop
     def delta_position(self, inner):
         if type(inner) != Body: raise TypeError
-        return inner.position - self.position
+        return inner.position-self.position
 
     # Returns the true distance as a combination of position between
     # calling body and inner body
@@ -156,9 +156,9 @@ class Body:
         dp = self.delta_position(inner) # Returns delta vector
         dist = self.distance(inner)
         if dist == 0: dist = 1
-        magnitude = (6.67e-11*self.mass*inner.mass)/np.power(dist, 2)
+        magnitude = (6.67e-11 * self.mass * inner.mass)/np.power(dist, 2)
         unit_vector = dp/dist
-        force_vec = unit_vector*magnitude
+        force_vec = unit_vector * magnitude
         return force_vec
 
     def update_acceleration(self, inner):
@@ -173,8 +173,8 @@ class Body:
         x_min = -radius
         y_max = radius
         y_min = -radius
-        x_scale = 1/(x_max-x_min)
-        y_scale = 1/(y_max-x_min)
+        x_scale = 1/(x_max - x_min)
+        y_scale = 1/(y_max - x_min)
 
         # Size of the universe itself - bound to a certain resolution. 
         # Smaller than the specified resolution for visualization purposes.
@@ -183,15 +183,15 @@ class Body:
 
         # + w/h // 2 - bounding_factor//2 is the formula used to center the universe in the main
         # window/resoultion
-        xs = ((x_scale*(self.position.x-x_min))*bounding_factor)+w//2-bounding_factor//2
-        ys = ((y_scale*(self.position.y-y_min))*bounding_factor)+h//2-bounding_factor//2
+        xs = ((x_scale * (self.position.x - x_min)) * bounding_factor) + w//2 -bounding_factor//2
+        ys = ((y_scale * (self.position.y - y_min)) * bounding_factor) + h//2 -bounding_factor//2
 
         pygame.draw.circle(screen, self.colour, (xs, ys), self.radius)
 
     # Updates velocity and moves the body 
     def update(self, dt):
         self.update_velocity(dt)
-        self.position += (self.velocity*dt)
+        self.position += (self.velocity * dt)
 
     # Updates velocity using the net acceration and dt
     def update_velocity(self, dt):
@@ -201,18 +201,23 @@ class Body:
 
 
 class Simulation:
-    def __init__(self, w, h, step):
+    def __init__(self, w, h, step, squeeze):
         # Ideally provided in command line arguments, therefore no need to 
         # add them as a property
         self.w = w
         self.h = h
         self.timestep = step
+
         # Set default fps to 60
         self.fps = 60
+
         # Set a default universe radius-can be changed when parsing file
         self.universe_radius = 2.50e+11 
         self.bodies = []
         self.draw_radius = 10
+
+        # Higher the number the more squeezed the universe will appear in the screen
+        self.squeeze = squeeze
         pass
     
     @property
@@ -277,8 +282,6 @@ class Simulation:
         pygame.display.set_caption("nbody")
         clock = pygame.time.Clock()
         run = True
-        # Higher the number the more squeezed the universe will appear in the screen
-        squeeze = 2
     
         # Game loop
         while run:
@@ -293,7 +296,7 @@ class Simulation:
                     if inner is not outer_b:
                         outer_b.update_acceleration(inner)
                 outer_b.update(self.timestep)
-                outer_b.draw(screen, self.universe_radius, self.w, self.h, squeeze)
+                outer_b.draw(screen, self.universe_radius, self.w, self.h, self.squeeze)
     
             pygame.display.flip()
 
@@ -301,12 +304,12 @@ def main():
     # Choose a certain max draw radius
     radius_cap = 6
 
-    # <w> <h> <step>
-    sim = Simulation(sys.argv[1], sys.argv[2], sys.argv[3])
+    # <w> <h> <step> <squeeze>
+    sim = Simulation(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
 
     # Max radius you want the pygame draw object (circle) to have (in pixels)
     sim.draw_radius = radius_cap
-    sim.parse_file(sys.argv[4])
+    sim.parse_file(sys.argv[5])
     sim.simulate()
 
 
