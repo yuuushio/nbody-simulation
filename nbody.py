@@ -1,5 +1,6 @@
 import numpy as np
 import pygame
+import sys
 
 class Vector:
     def __init__(self, x, y, z=0):
@@ -199,10 +200,6 @@ class Body:
         self.acceleration = Vector(0,0,0)
 
 
-
-
-# TODO: take out main simulation logic out of main loop and use an object for it: a "build-space object or smt which the user can init with w,h,timestep,cap,screencolour"
-
 class Simulation:
     def __init__(self, w, h, step):
         # Ideally provided in command line arguments, therefore no need to 
@@ -328,12 +325,16 @@ def main():
     w = 1920
     h = 1080
     fps = 60
-    radius_cap = 6# Choose a certain max draw radius
-    #bodies = read_file("test.txt", radius_cap)
-    
-    sim = Simulation(w, h, 20000)
+
+    # Choose a certain max draw radius
+    radius_cap = 6
+
+    # <w> <h> <step>
+    sim = Simulation(sys.argv[1], sys.argv[2], sys.argv[3])
+
+    # Max radius you want the pygame draw object (circle) to have (in pixels)
     sim.draw_radius = radius_cap
-    sim.parse_file("data/8star-rotation.txt")
+    sim.parse_file(sys.argv[4])
     sim.simulate()
 
 
