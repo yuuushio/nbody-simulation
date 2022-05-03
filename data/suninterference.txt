@@ -6,5 +6,3 @@
 6.0000e+26 -1.2000e+11 0.0000e+00 0.0000e+00 -1.5400e+05 pluto.gif
 6.0000e+26 1.2000e+11 0.0000e+00 0.0000e+00 1.5400e+05 pluto.gif
 
-Creator of the Universe:  Kevin Henneck
-

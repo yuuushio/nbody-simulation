@@ -53,11 +53,3 @@
 3.39E+11 8.17E+10 -4.56E+03 1.89E+04 1.760E+12 asteroid.gif
 -1.97E+11 -2.82E+11 1.60E+04 -1.12E+04 4.020E+12  asteroid.gif
 
-Creator of universe: Dzhelil Rufat, COS 126, Spring 2004
-
-This file can be used to simulate the entrance of a black hole into
-the Solar System. Special effects can be observed such as the deformation of
-the asteroid field, the swing shot effect of Jupiter around the
-black hole and a collision between Jupiter and the Sun. Earth survives the
-entrance of the black hole but its orbit becomes extrememly eccentric.
-

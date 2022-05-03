@@ -102,9 +102,3 @@
 3.50e12 -2.1974262304374573E11 -1.063859097128325E10 483.572316876564 -9988.301047442985 earth.gif
 2e30 0.0 0.0 0.0 0.0 sun.gif
 
-Creator of universe: John Colosimo, COS 126, Fall 2006
-
-This universe consists of 100 earths evenly spaced in a circle
-around the sun, and all orbiting around it in highly elliptical orbits.  
-They close in on the sun, only to be flung back out to their original 
-position.

@@ -10,11 +10,3 @@
 6.419e23 0.000e00 2.279e11 2.410e04 0.000e00 electron.png
 6.419e23 0.000e00 -2.279e11 -2.410e04 0.000e00 electron.png
 
-Creator of universe: Christina Chang, COS 126, Fall 2008
-
-I created the Princetonium universe (by combining the Plutonium symbol 
-(I thought it appropriate given the astronomical context) with the atomic 
-structure of Oxygen). Princetonium has 8 protons(+), 8 neutrons(n), and 
-8 electrons(-). While the atomic universe depicted in my animation is only 
-a rough visual of the atom, I drew the parallel between electron orbitals 
-and planetary orbits. 

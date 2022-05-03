@@ -258,7 +258,6 @@ class Simulation:
         # TODO: if radius isnt provided, use default. impl logic to deal 
         # Use radius from file if provided 
         self.universe_radius = float(string_bodies[1])
-        print(string_bodies[2:])
         builder_list = []
         mass_list = []
         for b in string_bodies[2:]:
@@ -305,7 +304,7 @@ def main():
     radius_cap = 6
 
     # <w> <h> <step> <squeeze>
-    sim = Simulation(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    sim = Simulation(int(sys.argv[1]), int(sys.argv[2]), float(sys.argv[3]), int(sys.argv[4]))
 
     # Max radius you want the pygame draw object (circle) to have (in pixels)
     sim.draw_radius = radius_cap

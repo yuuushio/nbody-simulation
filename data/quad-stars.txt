@@ -9,4 +9,3 @@
 5.974e27 0.000e00 -0.300e11 0.000e00 -8.000e04 earth.gif
 5.974e27 0.000e00 0.300e11 0.000e00 8.000e04 earth.gif
 
-Creator of universe: John Son, COS 126, Spring 2004
