@@ -242,10 +242,10 @@ class Simulation:
         return bodies_tmp
 
     def parse_file(self, file):
-    # New test data in the form of:
-    # <num-bodies>
-    # <universe-radius>
-    # m x y vx vy
+        # New test data in the form of:
+        # <num-bodies>
+        # <universe-radius>
+        # m x y vx vy
         with open(file) as f:
             data = f.read()
         
@@ -298,10 +298,6 @@ class Simulation:
             pygame.display.flip()
 
 def main():
-    w = 1920
-    h = 1080
-    fps = 60
-
     # Choose a certain max draw radius
     radius_cap = 6
 
