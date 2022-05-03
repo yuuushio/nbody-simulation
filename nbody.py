@@ -25,6 +25,7 @@ class Vector:
             return Vector(self.x*other.x, self.y*other.y, self.z*other.z)
         return Vector(self.x*other, self.y*other, self.z*other)
 
+    # Doesn't handle division by 0
     def __truediv__(self, other):
         if type(other) == Vector:
             return Vector(self.x/other.x, self.y/other.y, self.z/other.z)
@@ -240,11 +241,10 @@ def read_file(file, radius_cap):
 
     return bodies
 
-# TODO: implement a function read a file with different form of data
 # New test data in the form of:
 # <num-bodies>
 # <universe-radius>
-# m px py vx vy
+# m x y vx vy
 def read_file_2d(file, radius_cap):
     with open(file) as f:
         data = f.read()
