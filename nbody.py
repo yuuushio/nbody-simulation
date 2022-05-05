@@ -311,6 +311,8 @@ def main():
     sim.parse_file(sys.argv[5])
     sim.simulate()
 
+    # TODO: add a cmd line argument that lets you set a multipler for the draw radius
+
 
 if __name__ == "__main__":
     main()

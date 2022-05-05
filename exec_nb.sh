@@ -1,3 +1,3 @@
 #! /bin/sh
 
-python nbody.py 1920 1080 25000 2 data/awesome.txt
+python nbody.py 500 500 85000 2 data/kaleidoscope.txt
