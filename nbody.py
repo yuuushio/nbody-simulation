@@ -2,6 +2,7 @@ import numpy as np
 import pygame
 import sys
 
+
 class Vector:
     def __init__(self, x, y, z=0):
         self.x = x
@@ -20,7 +21,7 @@ class Vector:
         if type(other) == Vector:
             return Vector(self.x - other.x, self.y - other.y, self.z - other.z)
         return Vector(self.x - other, self.y - other, self.z - other)
-    
+
     def __mul__(self, other):
         if type(other) == Vector:
             return Vector(self.x * other.x, self.y * other.y, self.z * other.z)
@@ -38,21 +39,22 @@ class Vector:
     def __str__(self):
         return f"{self.x}, {self.y}"
 
+
 class Builder:
     def __init__(self):
         # default values
-        self.positon_vector = Vector(0,0,0)
-        self.velocity_vector = Vector(0,0,0)
-        self.accel_vector = Vector(0,0,0)
+        self.positon_vector = Vector(0, 0, 0)
+        self.velocity_vector = Vector(0, 0, 0)
+        self.accel_vector = Vector(0, 0, 0)
         self.m = 1
         self.r = 5
         self.colour = (201, 203, 255)
-    
+
     def pos_vec(self, vec: Vector):
         self.positon_vector = vec
         # Return self so we can chain the construction
         return self
-    
+
     def vel_vector(self, vec: Vector):
         self.velocity_vector = vec
         return self
@@ -60,7 +62,7 @@ class Builder:
     def mass(self, m):
         self.m = m
         return self
-    
+
     def draw_radius(self, r):
         self.r = r
         return self
@@ -78,6 +80,7 @@ class Builder:
         self.body.colour = self.colour
         self.body.acceleration = self.accel_vector
         return self.body
+
 
 class Body:
     def __init__(self):
@@ -137,13 +140,15 @@ class Body:
 
     # Where inner is the j'th body in the inner for loop
     def delta_position(self, inner):
-        if type(inner) != Body: raise TypeError
+        if type(inner) != Body:
+            raise TypeError
         return inner.position-self.position
 
     # Returns the true distance as a combination of position between
     # calling body and inner body
-    def distance(self, inner): 
-        if type(inner) != Body: raise TypeError
+    def distance(self, inner):
+        if type(inner) != Body:
+            raise TypeError
         delta_pos = self.delta_position(inner)
         # Better to multiply than to use power
         delta_pos_sq = delta_pos * delta_pos
@@ -152,17 +157,20 @@ class Body:
 
     # Returns the force vector - force acting on x,y,z
     def force(self, inner):
-        if type(inner) != Body: raise TypeError
-        dp = self.delta_position(inner) # Returns delta vector
+        if type(inner) != Body:
+            raise TypeError
+        dp = self.delta_position(inner)  # Returns delta vector
         dist = self.distance(inner)
-        if dist == 0: dist = 1
+        if dist == 0:
+            dist = 1
         magnitude = (6.67e-11 * self.mass * inner.mass)/np.power(dist, 2)
         unit_vector = dp/dist
         force_vec = unit_vector * magnitude
         return force_vec
 
     def update_acceleration(self, inner):
-        if type(inner) != Body: raise TypeError
+        if type(inner) != Body:
+            raise TypeError
         a_vec = self.force(inner)/self.mass
         self.acceleration += a_vec
 
@@ -176,19 +184,21 @@ class Body:
         x_scale = 1/(x_max - x_min)
         y_scale = 1/(y_max - x_min)
 
-        # Size of the universe itself - bound to a certain resolution. 
+        # Size of the universe itself - bound to a certain resolution.
         # Smaller than the specified resolution for visualization purposes.
         # Also determines how "spread" out the bodies are on x,y axes
-        bounding_factor = min(w,h)//squeeze
+        bounding_factor = min(w, h)//squeeze
 
         # + w/h // 2 - bounding_factor//2 is the formula used to center the universe in the main
         # window/resoultion
-        xs = ((x_scale * (self.position.x - x_min)) * bounding_factor) + w//2 -bounding_factor//2
-        ys = ((y_scale * (self.position.y - y_min)) * bounding_factor) + h//2 -bounding_factor//2
+        xs = ((x_scale * (self.position.x - x_min)) *
+              bounding_factor) + w//2 - bounding_factor//2
+        ys = ((y_scale * (self.position.y - y_min)) *
+              bounding_factor) + h//2 - bounding_factor//2
 
         pygame.draw.circle(screen, self.colour, (xs, ys), self.radius)
 
-    # Updates velocity and moves the body 
+    # Updates velocity and moves the body
     def update(self, dt):
         self.update_velocity(dt)
         self.position += (self.velocity * dt)
@@ -197,12 +207,12 @@ class Body:
     def update_velocity(self, dt):
         self.velocity += self.acceleration*dt
         # Reset acceleration after each full iteration
-        self.acceleration = Vector(0,0,0)
+        self.acceleration = Vector(0, 0, 0)
 
 
 class Simulation:
     def __init__(self, w, h, step, squeeze):
-        # Ideally provided in command line arguments, therefore no need to 
+        # Ideally provided in command line arguments, therefore no need to
         # add them as a property
         self.w = w
         self.h = h
@@ -212,14 +222,14 @@ class Simulation:
         self.fps = 60
 
         # Set a default universe radius-can be changed when parsing file
-        self.universe_radius = 2.50e+11 
+        self.universe_radius = 2.50e+11
         self.bodies = []
         self.draw_radius = 10
 
         # Higher the number the more squeezed the universe will appear in the screen
         self.squeeze = squeeze
         pass
-    
+
     @property
     def max_draw_radius(self):
         return self.draw_radius
@@ -228,8 +238,8 @@ class Simulation:
     def max_draw_radius(self, r):
         self.draw_radius = r
 
-    # External method used to calculate and apply radius using the builder, and build the body 
-    def assign_draw_radius(self,builder_list, mass_list, largest_draw_r):
+    # External method used to calculate and apply radius using the builder, and build the body
+    def assign_draw_radius(self, builder_list, mass_list, largest_draw_r):
         np_mass_list = np.array(mass_list)
         mass_max = np_mass_list.max()
         bodies_tmp = []
@@ -240,9 +250,10 @@ class Simulation:
                 body = builder_list[i].draw_radius(3).build()
                 bodies_tmp.append(body)
             else:
-                new_r = int((np_mass_list[i]/mass_max)*largest_draw_r) 
+                new_r = int((np_mass_list[i]/mass_max)*largest_draw_r)
                 # Also assign the body with the highest mass a distinctive colour
-                body = builder_list[i].draw_radius(new_r).col((242,143,173)).build()
+                body = builder_list[i].draw_radius(
+                    new_r).col((242, 143, 173)).build()
                 bodies_tmp.append(body)
         return bodies_tmp
 
@@ -253,58 +264,64 @@ class Simulation:
         # m x y vx vy
         with open(file) as f:
             data = f.read()
-        
+
         string_bodies = [d for d in data.split("\n")]
-        # TODO: if radius isnt provided, use default. impl logic to deal 
-        # Use radius from file if provided 
+        # TODO: if radius isnt provided, use default. impl logic to deal
+        # Use radius from file if provided
         self.universe_radius = float(string_bodies[1])
         builder_list = []
         mass_list = []
         for b in string_bodies[2:]:
             # NOTE: fails when there are multiple spaces between the attributes
-            atb = b.split(" ") # Short for "attributes"
-            
+            atb = b.split(" ")  # Short for "attributes"
+
             if len(atb) >= 4:
-                pv = Vector(float(atb[1]),float(atb[2]))
-                vv = Vector(float(atb[3]),float(atb[4]))
+                pv = Vector(float(atb[1]), float(atb[2]))
+                vv = Vector(float(atb[3]), float(atb[4]))
                 # Append body builder to builder_list
-                builder_list.append(Builder().pos_vec(pv).vel_vector(vv).mass(float(atb[0])))
+                builder_list.append(Builder().pos_vec(
+                    pv).vel_vector(vv).mass(float(atb[0])))
                 # Append corressponding mass right after so we can use the same index to reference same entity
                 mass_list.append(float(atb[0]))
-        self.bodies = self.assign_draw_radius(builder_list, mass_list, self.max_draw_radius) 
-
+        self.bodies = self.assign_draw_radius(
+            builder_list, mass_list, self.max_draw_radius)
 
     # Can impl later with z coordinates for value/calculation output purposes
+
     def simulate(self):
         pygame.init()
         screen = pygame.display.set_mode((self.w, self.h))
         pygame.display.set_caption("nbody")
         clock = pygame.time.Clock()
         run = True
-    
+
         # Game loop
         while run:
             clock.tick(self.fps)
             for event in pygame.event.get():
-                if event.type == pygame.QUIT: run = False
-    
+                if event.type == pygame.QUIT:
+                    run = False
+
             screen.fill((22, 19, 32))
-    
+
             for outer_b in self.bodies:
                 for inner in self.bodies:
                     if inner is not outer_b:
                         outer_b.update_acceleration(inner)
                 outer_b.update(self.timestep)
-                outer_b.draw(screen, self.universe_radius, self.w, self.h, self.squeeze)
-    
+                outer_b.draw(screen, self.universe_radius,
+                             self.w, self.h, self.squeeze)
+
             pygame.display.flip()
+
 
 def main():
     # Choose a certain max draw radius
     radius_cap = 6
 
     # <w> <h> <step> <squeeze>
-    sim = Simulation(int(sys.argv[1]), int(sys.argv[2]), float(sys.argv[3]), int(sys.argv[4]))
+    sim = Simulation(int(sys.argv[1]), int(
+        sys.argv[2]), float(sys.argv[3]), int(sys.argv[4]))
 
     # Max radius you want the pygame draw object (circle) to have (in pixels)
     sim.draw_radius = radius_cap
@@ -316,4 +333,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
