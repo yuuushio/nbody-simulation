@@ -37,7 +37,7 @@ python nbody.py 1920 1080 dt 1 data/solarSystem.txt
 ```
 
 ## Demo
-<img src="data/demo/1.gif" width=300/>
+<img src="https://raw.githubusercontent.com/yuuushio/nbody-simulation/main/data/demo/1.gif?token=GHSAT0AAAAAABTTVUFGG3GEKKBMK4ULNNA4YTV6FSA" width=300/>
 
 ## Dependencies
 - `numpy`
