@@ -13,7 +13,7 @@ Alternatively, run the `nbody.py` file itself by specifying your own command lin
 ```bash
 python nbody.py <w> <r> <dt> <squeeze> <file>
 ```
-Where,
+Where:
 - `w`: width of the graphical interface.
 - `h`: height of the graphical interface.
 - `dt`: time-step for the simulation.
