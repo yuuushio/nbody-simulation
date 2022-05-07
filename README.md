@@ -37,7 +37,7 @@ python nbody.py 1920 1080 dt 1 data/solarSystem.txt
 ```
 
 ## Demo
-<img src="" width=300/>
+<img src="data/demo/1.gif" width=300/>
 
 ## Dependencies
 - `numpy`
