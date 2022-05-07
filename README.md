@@ -37,7 +37,16 @@ python nbody.py 1920 1080 dt 1 data/solarSystem.txt
 ```
 
 ## Demo
-<img src="https://raw.githubusercontent.com/yuuushio/nbody-simulation/main/data/demo/1.gif?token=GHSAT0AAAAAABTTVUFGG3GEKKBMK4ULNNA4YTV6FSA" width=300/>
+
+<img src="data/demo/simple-solarsystem.gif" width=300/>
+
+<img src="data/demo/dance.gif" width=300/>
+
+<img src="data/demo/earths.gif" width=300/>
+
+<img src="data/demo/entropy.gif" width=300/>
+
+<img src="data/demo/quad-stars.gif" width=300/>
 
 ## Dependencies
 - `numpy`
