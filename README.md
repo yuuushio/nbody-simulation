@@ -3,6 +3,11 @@
 N-Body Simulation is a common astrophysics simulation, used to model orbiting bodies within a solar system and galaxy. The simulation is done with the integration of Newton's gravitational force equation - calculating the gravitational force between two bodies, which is then used to calculate the new velocity and position using a timestep, `dt`. This is the common brute-force method which runs in $O(n)$ which is good for understanding the concept and forms a basis for more efficient, practical models. The results of the simulation can be visualized in real-time via a graphical interface, which itself is implemented using PyGame.
 
 ## Usage
+
+### Dependencies
+- `numpy`
+- `pygame`
+
 First, make the `run.sh` file executable using `chmod +x run.sh` command. Then, run the file which executes the python program.
 
 ```bash
@@ -47,7 +52,3 @@ python nbody.py 1920 1080 dt 1 data/solarSystem.txt
 <img src="data/demo/entropy.gif" width=600/>
 
 <img src="data/demo/quad-stars.gif" width=600/>
-
-## Dependencies
-- `numpy`
-- `pygame`
