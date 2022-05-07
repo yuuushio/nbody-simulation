@@ -38,15 +38,15 @@ python nbody.py 1920 1080 dt 1 data/solarSystem.txt
 
 ## Demo
 
-<img src="data/demo/simple-solarsystem.gif" width=300/>
+<img src="data/demo/simple-solarsystem.gif" width=600/>
 
-<img src="data/demo/dance.gif" width=300/>
+<img src="data/demo/dance.gif" width=600/>
 
-<img src="data/demo/earths.gif" width=300/>
+<img src="data/demo/earths.gif" width=600/>
 
-<img src="data/demo/entropy.gif" width=300/>
+<img src="data/demo/entropy.gif" width=600/>
 
-<img src="data/demo/quad-stars.gif" width=300/>
+<img src="data/demo/quad-stars.gif" width=600/>
 
 ## Dependencies
 - `numpy`
