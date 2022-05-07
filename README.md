@@ -51,10 +51,3 @@ python nbody.py 1920 1080 dt 1 data/solarSystem.txt
 ## Dependencies
 - `numpy`
 - `pygame`
-
-## References
-
-Useful links that helped me when I was researching the problem.
-
-https://www.cs.colostate.edu/~cs560/Fall2015/Lectures/ColfaxSlides.pdf
-https://www.cis.upenn.edu/~cis110/18fa/hw/hw05/nbodyobj.html
