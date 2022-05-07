@@ -1,3 +1,3 @@
 #! /bin/sh
 
-python nbody.py 500 500 85000 2 data/kaleidoscope.txt
+python nbody.py 760 540 20000 2 data/solarSystem.txt
