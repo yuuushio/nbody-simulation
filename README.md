@@ -3,7 +3,7 @@
 N-Body Simulation is a common astrophysics simulation, used to model orbiting bodies within a solar system and galaxy. The simulation is done with the integration of Newton's gravitational force equation - calculating the gravitational force between two bodies, which is then used to calculate the new velocity and position using a timestep, `dt`. This is the common brute-force method which runs in $O(n)$ which is good for understanding the concept and forms a basis for more efficient, practical models. The results of the simulation can be visualized in real-time via a graphical interface, which itself is implemented using PyGame.
 
 ## Usage
-First, make the `run.sh` file executable using `chmod +x run.sh` command. Then, run the file that executes the python program.
+First, make the `run.sh` file executable using `chmod +x run.sh` command. Then, run the file which executes the python program.
 
 ```bash
 ./run.sh
