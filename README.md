@@ -1,6 +1,6 @@
 # N-Body Simulation
 
-N-Body Simulation is a common astrophysics simulation, used to model orbiting bodies within a solar system and galaxy. The simulation is done with the integration of Newton's gravitational force equation - calculating the gravitational force between two bodies, which is then used to calculate the new velocity and position using a timestep, `dt`. This is the common brute-force method which runs in $O(n)$ which is good for understanding the concept and forms a basis for more efficient, practical models. The results of the simulation can be visualized in real-time via a graphical interface, which itself is implemented using PyGame.
+N-Body Simulation is a common astrophysics simulation, used to model orbiting bodies within a solar system and galaxy. The simulation is done with the integration of Newton's gravitational force equation - calculating the gravitational force between two bodies, which is then used to calculate the new velocity and position using a timestep, `dt`. This is the common brute-force method with time complexity of `O(n^2)`; it's is good for understanding the concept, and forms a basis for more efficient, practical models. The results of the simulation are animated and can be visualized in real-time via a graphical interface, which itself is implemented using PyGame.
 
 ## Dependencies
 - `numpy`
