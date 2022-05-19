@@ -3,23 +3,26 @@ import pandas as pd
 import pygame
 import sys
 
+
 class Parser:
+
     def __init__(self, file):
         self.file = file
 
     def get_data(self):
         full_df = pd.read_csv(self.file,
-                                   header=None,
-                                   delimiter=" ",
-                                   names=list(range(6)))
+                              header=None,
+                              delimiter=" ",
+                              names=list(range(6)))
         universe_radius = full_df[0][0]
 
-        full_df = full_df.drop([len(full_df.columns) - 1],
-                                         axis=1).drop([0])
-        
+        full_df = full_df.drop([len(full_df.columns) - 1], axis=1).drop([0])
+
         return full_df, universe_radius
 
+
 class Calculator:
+
     def __init__(self, file, step):
         self.parser = Parser(file)
         self.initialize_data()
@@ -27,35 +30,34 @@ class Calculator:
         self.timestep = step
 
     def initialize_data(self):
-        
         self.full_df, self.universe_radius = self.parser.get_data()
         print(self.universe_radius)
         self.mass_m = self.full_df.iloc[:, [0]].to_numpy()
         self.pos_m = self.full_df.iloc[:, [1, 2]].to_numpy()
         self.vel_m = self.full_df.iloc[:, [3, 4]].to_numpy()
-    
+
     def unv_r(self):
         return self.universe_radius
 
     def num_bodies(self):
         return len(self.full_df)
-    
+
     def delta_position(self, i):
         # np.delete used to skip calculation when we're comparing a body/index
         # with itself (i.e., continue: when i == j)
         return np.delete(self.pos_m, i, 0) - self.pos_m[i]
-    
+
     def distance_matrix(self, i):
         delta_pos_matrix = self.delta_position(i)
 
         # reshape the sum of squares into a column vector for broadcasting purposes
         sq_sum = np.sum(np.square(delta_pos_matrix), axis=1).reshape(
-                    (len(delta_pos_matrix), 1))
+            (len(delta_pos_matrix), 1))
 
         # This matrix would contain distance values that are 0's
         dist_matrix = np.sqrt(sq_sum)
 
-        # We can't have 0 distance values because that would result in 
+        # We can't have 0 distance values because that would result in
         # division by 0 when we calculate magnitude.
         # Thus we change any values that are 0, to 1 - using fancy indexing
         dist_matrix[dist_matrix == 0] = 1
@@ -63,7 +65,7 @@ class Calculator:
         # Return body for force calculations to avoid having to call delate_position
         # method again in the force method
         return dist_matrix, delta_pos_matrix
-    
+
     def force_matrix(self, i):
         dist_m, delta_pos = self.distance_matrix(i)
 
@@ -74,20 +76,20 @@ class Calculator:
         # Calculate the magnitude using G
         magnitude_matrix = (self.g_constant * m_times_m) / np.square(dist_m)
 
-        # Matrix of force exerted by each body on x,y 
+        # Matrix of force exerted by each body on x,y
         force_m = (delta_pos / dist_m) * magnitude_matrix
-        
+
         return force_m
 
     # Calculate the net acceleration acting on i
     def acceleation(self, i):
         # a = f/m
         # sum f/m exerted by all bodies
-        return np.sum(self.force_matrix(i)/self.mass_m[i], axis=0)
-    
+        return np.sum(self.force_matrix(i) / self.mass_m[i], axis=0)
+
     def update_velocity(self, i):
         self.vel_m[i] += self.acceleation(i) * self.timestep
-    
+
     def new_position(self, i):
         # Update velocity, then update i'th body's position
         self.update_velocity(i)
@@ -115,11 +117,8 @@ class Simulation:
 
         # Higher the number the more squeezed the universe will appear in the screen
         self.squeeze = squeeze
-
+        # object color
         self.colour = (201, 203, 255)
-
-
-        pass
 
     @property
     def max_draw_radius(self):
@@ -129,14 +128,7 @@ class Simulation:
     def max_draw_radius(self, r):
         self.draw_radius = r
 
-    # External method used to calculate and apply radius using the builder, and build the body
-    def assign_draw_radius(self, builder_list, mass_list, largest_draw_r):
-        return None
-
-    
-
     def draw(self, pos_li):
-
         # Calculate scale to fit x,y coordinates within screen resolution
         x_max = self.universe_radius
         x_min = -self.universe_radius
@@ -162,7 +154,6 @@ class Simulation:
         pygame.display.set_caption("nbody")
         clock = pygame.time.Clock()
         run = True
-        
 
         # Game loop
         while run:
