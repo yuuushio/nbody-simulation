@@ -4,6 +4,47 @@ import pygame
 import sys
 
 
+class Calculator:
+    def __init__(self, file):
+        self.parse_file(file)
+
+    def parse_file(self, file):
+        self.full_df = pd.read_csv(file,
+                                   header=None,
+                                   delimiter=" ",
+                                   names=list(range(6)))
+        self.universe_radius = self.full_df[0][0]
+
+        self.full_df = self.full_df.drop([len(self.full_df.columns) - 1],
+                                         axis=1).drop([0])
+
+        self.mass_m = self.full_df.iloc[:, [0]].to_numpy()
+        self.pos_m = self.full_df.iloc[:, [1, 2]].to_numpy()
+        self.vel_m = self.full_df.iloc[:, [3, 4]].to_numpy()
+    
+    def delta_position(self, i):
+        # np.delete used to skip calculation when we're comparing a body/index
+        # with itself (i.e., continue: when i == j)
+        return np.delete(self.pos_m, i, 0) - self.pos_m[i]
+    
+    def distance_matrix(self, i):
+        delta_pos_matrix = self.delta_position(i)
+
+        # reshape the sum of squares into a column vector for broadcasting purposes
+        sq_sum = np.sum(np.square(delta_pos_matrix), axis=1).reshape(
+                    (len(delta_pos_matrix), 1))
+
+        # This matrix would contain distance values that are 0's
+        dist_matrix = np.sqrt(sq_sum)
+
+        # We can't have 0 distance values because that would result in 
+        # division by 0 when we calculate magnitude.
+        # Thus we change any values that are 0, to 1 - using fancy indexing
+        dist_matrix[dist_matrix == 0] = 1
+
+        return dist_matrix
+
+
 class Simulation:
 
     def __init__(self, w, h, step, squeeze):
@@ -39,20 +80,7 @@ class Simulation:
     def assign_draw_radius(self, builder_list, mass_list, largest_draw_r):
         return None
 
-    def parse_file(self, file):
-        self.full_df = pd.read_csv(file,
-                                   header=None,
-                                   delimiter=" ",
-                                   names=list(range(6)))
-        self.universe_radius = self.full_df[0][0]
-
-        self.full_df = self.full_df.drop([len(self.full_df.columns) - 1],
-                                         axis=1).drop([0])
-
-        self.mass_m = self.full_df.iloc[:, [0]].to_numpy()
-        self.pos_m = self.full_df.iloc[:, [1, 2]].to_numpy()
-        self.vel_m = self.full_df.iloc[:, [3, 4]].to_numpy()
-        print(self.mass_m[2])
+    
 
     def draw(self, pos_li):
 
@@ -93,14 +121,6 @@ class Simulation:
             screen.fill((22, 19, 32))
 
             for i in range(len(self.full_df)):
-                delta_pos_matrix = np.delete(self.pos_m, i, 0) - self.pos_m[i]
-
-                val_sums = np.sum(np.square(delta_pos_matrix), axis=1).reshape(
-                    (len(delta_pos_matrix), 1))
-
-                dist_m = np.sqrt(val_sums)
-
-                dist_m[dist_m == 0] = 1
 
                 a = (np.delete(self.mass_m, i, 0) * self.mass_m[i])
                 magnitude_m = (g_constant * a) / np.square(dist_m)
