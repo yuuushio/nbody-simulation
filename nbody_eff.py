@@ -62,8 +62,7 @@ class Calculator:
         # Thus we change any values that are 0, to 1 - using fancy indexing
         dist_matrix[dist_matrix == 0] = 1
 
-        # Return body for force calculations to avoid having to call delate_position
-        # method again in the force method
+        # Return both for force calculations to avoid having to call delta_position again
         return dist_matrix, delta_pos_matrix
 
     def force_matrix(self, i):
