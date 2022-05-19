@@ -1,3 +1,3 @@
 #! /bin/sh
 
-python nbody.py 760 540 20000 2 data/solarSystem.txt
+python nbody_eff.py 1280 720 35000 1 data/galaxy.txt
