@@ -5,8 +5,10 @@ import sys
 
 
 class Calculator:
-    def __init__(self, file):
+    def __init__(self, file, step):
         self.parse_file(file)
+        self.g_constant = 6.67e-11
+        self.timestep = step
 
     def parse_file(self, file):
         self.full_df = pd.read_csv(file,
@@ -42,7 +44,35 @@ class Calculator:
         # Thus we change any values that are 0, to 1 - using fancy indexing
         dist_matrix[dist_matrix == 0] = 1
 
-        return dist_matrix
+        # Return body for force calculations to avoid having to call delate_position
+        # method again in the force method
+        return dist_matrix, delta_pos_matrix
+    
+    def force_matrix(self, i):
+        dist_m, delta_pos = self.distance_matrix(i)
+
+        # Multiply the current body's mass with all other masses except its own
+        # - the scalar mass of the single body is broadcasted to all other masses
+        m_times_m = np.delete(self.mass_m, i, 0) * self.mass_m[i]
+
+        # Calculate the magnitude using G
+        magnitude_matrix = (self.g_constant * m_times_m) / np.square(dist_m)
+
+        # Matrix of force exerted by each body on x,y 
+        force_m = (delta_pos / dist_m) * magnitude_matrix
+
+    # Calculate the net acceleration acting on i
+    def acceleation(self, i):
+        # a = f/m
+        # sum f/m exerted by all bodies
+        return np.sum(self.force_matrix(i)/self.mass_m[i], axis=0)
+    
+    def updatte_velocity(self, i):
+        self.vel_m[i] += self.acceleation(i) * self.timestep
+    
+    def new_position(self, i):
+        self.pos_m[i] += self.vel_m[i] * self.timestep
+        return self.pos_m[i]
 
 
 class Simulation:
@@ -65,6 +95,8 @@ class Simulation:
         self.squeeze = squeeze
 
         self.colour = (201, 203, 255)
+
+        self.calc = Calculator(sys.argv[5], step)
 
         pass
 
@@ -109,7 +141,7 @@ class Simulation:
         pygame.display.set_caption("nbody")
         clock = pygame.time.Clock()
         run = True
-        g_constant = 6.67e-11
+        
 
         # Game loop
         while run:
@@ -121,22 +153,7 @@ class Simulation:
             screen.fill((22, 19, 32))
 
             for i in range(len(self.full_df)):
-
-                a = (np.delete(self.mass_m, i, 0) * self.mass_m[i])
-                magnitude_m = (g_constant * a) / np.square(dist_m)
-
-                # matrix of force exerted by each body on body-i
-                force_m = (delta_pos_matrix / dist_m) * magnitude_m
-                # a = f/m
-                accel_on_i = np.sum(force_m / self.mass_m[i], axis=0)
-                print(accel_on_i)
-
-                self.vel_m[i] += accel_on_i * self.timestep
-                print(self.vel_m[i])
-                print("......")
-                self.pos_m[i] += self.vel_m[i] * self.timestep
-
-                scale_tup = self.draw(self.pos_m[i])
+                scale_tup = self.draw(self.calc.new_position(i))
 
                 pygame.draw.circle(screen, self.colour, scale_tup, 1)
 
@@ -153,7 +170,6 @@ def main():
 
     # Max radius you want the pygame draw object (circle) to have (in pixels)
     sim.draw_radius = radius_cap
-    sim.parse_file(sys.argv[5])
     sim.simulate()
 
     # TODO: add a cmd line argument that lets you set a multipler for the draw radius
