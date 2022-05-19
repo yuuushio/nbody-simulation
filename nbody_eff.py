@@ -3,26 +3,39 @@ import pandas as pd
 import pygame
 import sys
 
+class Parser:
+    def __init__(self, file):
+        self.file = file
 
-class Calculator:
-    def __init__(self, file, step):
-        self.parse_file(file)
-        self.g_constant = 6.67e-11
-        self.timestep = step
-
-    def parse_file(self, file):
-        self.full_df = pd.read_csv(file,
+    def get_data(self):
+        full_df = pd.read_csv(self.file,
                                    header=None,
                                    delimiter=" ",
                                    names=list(range(6)))
-        self.universe_radius = self.full_df[0][0]
+        universe_radius = full_df[0][0]
 
-        self.full_df = self.full_df.drop([len(self.full_df.columns) - 1],
+        full_df = full_df.drop([len(full_df.columns) - 1],
                                          axis=1).drop([0])
+        
+        return full_df, universe_radius
 
+class Calculator:
+    def __init__(self, file, step):
+        self.parser = Parser(file)
+        self.initialize_data()
+        self.g_constant = 6.67e-11
+        self.timestep = step
+
+    def initialize_data(self):
+        
+        self.full_df, self.universe_radius = self.parser.get_data()
+        print(self.universe_radius)
         self.mass_m = self.full_df.iloc[:, [0]].to_numpy()
         self.pos_m = self.full_df.iloc[:, [1, 2]].to_numpy()
         self.vel_m = self.full_df.iloc[:, [3, 4]].to_numpy()
+    
+    def unv_r(self):
+        return self.universe_radius
 
     def num_bodies(self):
         return len(self.full_df)
@@ -76,6 +89,7 @@ class Calculator:
         self.vel_m[i] += self.acceleation(i) * self.timestep
     
     def new_position(self, i):
+        # Update velocity, then update i'th body's position
         self.update_velocity(i)
         self.pos_m[i] += self.vel_m[i] * self.timestep
         return self.pos_m[i]
@@ -93,8 +107,10 @@ class Simulation:
         # Set default fps to 60
         self.fps = 120
 
+        self.calc = Calculator(sys.argv[5], step)
+
         # Set a default universe radius-can be changed when parsing file
-        self.universe_radius = 2.50e+11
+        self.universe_radius = self.calc.unv_r()
         self.draw_radius = 10
 
         # Higher the number the more squeezed the universe will appear in the screen
@@ -102,7 +118,6 @@ class Simulation:
 
         self.colour = (201, 203, 255)
 
-        self.calc = Calculator(sys.argv[5], step)
 
         pass
 
@@ -159,9 +174,8 @@ class Simulation:
             screen.fill((22, 19, 32))
 
             for i in range(self.calc.num_bodies()):
-                scale_tup = self.draw(self.calc.new_position(i))
-
-                pygame.draw.circle(screen, self.colour, scale_tup, 1)
+                scaled_coordinates = self.draw(self.calc.new_position(i))
+                pygame.draw.circle(screen, self.colour, scaled_coordinates, 1)
 
             pygame.display.flip()
 
