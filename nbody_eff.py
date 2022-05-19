@@ -3,6 +3,7 @@ import pandas as pd
 import pygame
 import sys
 
+
 class Body:
 
     def __init__(self):
@@ -15,20 +16,20 @@ class Body:
         x_min = -radius
         y_max = radius
         y_min = -radius
-        x_scale = 1/(x_max - x_min)
-        y_scale = 1/(y_max - x_min)
+        x_scale = 1 / (x_max - x_min)
+        y_scale = 1 / (y_max - x_min)
 
         # Size of the universe itself - bound to a certain resolution.
         # Smaller than the specified resolution for visualization purposes.
         # Also determines how "spread" out the bodies are on x,y axes
-        bounding_factor = min(w, h)//squeeze
+        bounding_factor = min(w, h) // squeeze
 
         # + w/h // 2 - bounding_factor//2 is the formula used to center the universe in the main
         # window/resoultion
         xs = ((x_scale * (self.position.x - x_min)) *
-              bounding_factor) + w//2 - bounding_factor//2
+              bounding_factor) + w // 2 - bounding_factor // 2
         ys = ((y_scale * (self.position.y - y_min)) *
-              bounding_factor) + h//2 - bounding_factor//2
+              bounding_factor) + h // 2 - bounding_factor // 2
 
         pygame.draw.circle(screen, self.colour, (xs, ys), self.radius)
 
@@ -39,12 +40,13 @@ class Body:
 
     # Updates velocity using the net acceration and dt
     def update_velocity(self, dt):
-        self.velocity += self.acceleration*dt
+        self.velocity += self.acceleration * dt
         # Reset acceleration after each full iteration
         self.acceleration = Vector(0, 0, 0)
 
 
 class Simulation:
+
     def __init__(self, w, h, step, squeeze):
         # Ideally provided in command line arguments, therefore no need to
         # add them as a property
@@ -79,14 +81,18 @@ class Simulation:
         return None
 
     def parse_file(self, file):
-        self.full_df = pd.read_csv(file, header=None, delimiter=" ", names=list(range(6)))
+        self.full_df = pd.read_csv(file,
+                                   header=None,
+                                   delimiter=" ",
+                                   names=list(range(6)))
         self.universe_radius = self.full_df[0][0]
 
-        self.full_df = self.full_df.drop([len(self.full_df.columns)-1], axis=1).drop([0])
-        
-        self.mass_m = self.full_df.iloc[:,[0]].to_numpy()
-        self.pos_m = self.full_df.iloc[:,[1,2]].to_numpy()
-        self.vel_m = self.full_df.iloc[:,[3,4]].to_numpy()
+        self.full_df = self.full_df.drop([len(self.full_df.columns) - 1],
+                                         axis=1).drop([0])
+
+        self.mass_m = self.full_df.iloc[:, [0]].to_numpy()
+        self.pos_m = self.full_df.iloc[:, [1, 2]].to_numpy()
+        self.vel_m = self.full_df.iloc[:, [3, 4]].to_numpy()
         print(self.mass_m[2])
 
     def draw(self, pos_li):
@@ -96,21 +102,19 @@ class Simulation:
         x_min = -self.universe_radius
         y_max = self.universe_radius
         y_min = -self.universe_radius
-        x_scale = 1/(x_max - x_min)
-        y_scale = 1/(y_max - x_min)
+        x_scale = 1 / (x_max - x_min)
+        y_scale = 1 / (y_max - x_min)
 
-        bounding_factor = min(self.w, self.h)//self.squeeze
+        bounding_factor = min(self.w, self.h) // self.squeeze
 
         # + w/h // 2 - bounding_factor//2 is the formula used to center the universe in the main
         # window/resoultion
-        xs = ((x_scale * (pos_li[0]- x_min)) *
-              bounding_factor) + self.w//2 - bounding_factor//2
+        xs = ((x_scale * (pos_li[0] - x_min)) *
+              bounding_factor) + self.w // 2 - bounding_factor // 2
         ys = ((y_scale * (pos_li[1] - y_min)) *
-              bounding_factor) + self.h//2 - bounding_factor//2
+              bounding_factor) + self.h // 2 - bounding_factor // 2
 
-        return (xs,ys)
-
-        
+        return (xs, ys)
 
     def simulate(self):
         pygame.init()
@@ -118,7 +122,7 @@ class Simulation:
         pygame.display.set_caption("nbody")
         clock = pygame.time.Clock()
         run = True
-        g_constant = 6.67e-11 
+        g_constant = 6.67e-11
 
         # Game loop
         while run:
@@ -132,25 +136,26 @@ class Simulation:
             for i in range(len(self.full_df)):
                 delta_pos_matrix = np.delete(self.pos_m, i, 0) - self.pos_m[i]
 
-                val_sums = np.sum(np.square(delta_pos_matrix), axis=1).reshape((len(delta_pos_matrix),1))
+                val_sums = np.sum(np.square(delta_pos_matrix), axis=1).reshape(
+                    (len(delta_pos_matrix), 1))
 
                 dist_m = np.sqrt(val_sums)
 
                 dist_m[dist_m == 0] = 1
 
-                a = (np.delete(self.mass_m, i, 0)*self.mass_m[i])
-                magnitude_m = (g_constant*a) / np.square(dist_m)
+                a = (np.delete(self.mass_m, i, 0) * self.mass_m[i])
+                magnitude_m = (g_constant * a) / np.square(dist_m)
 
                 # matrix of force exerted by each body on body-i
-                force_m = (delta_pos_matrix / dist_m)*magnitude_m
+                force_m = (delta_pos_matrix / dist_m) * magnitude_m
                 # a = f/m
-                accel_on_i = np.sum(force_m/self.mass_m[i], axis=0)
+                accel_on_i = np.sum(force_m / self.mass_m[i], axis=0)
                 print(accel_on_i)
-                
-                self.vel_m[i] += accel_on_i*self.timestep
+
+                self.vel_m[i] += accel_on_i * self.timestep
                 print(self.vel_m[i])
                 print("......")
-                self.pos_m[i] += self.vel_m[i]*self.timestep
+                self.pos_m[i] += self.vel_m[i] * self.timestep
 
                 scale_tup = self.draw(self.pos_m[i])
 
@@ -164,8 +169,8 @@ def main():
     radius_cap = 6
 
     # <w> <h> <step> <squeeze>
-    sim = Simulation(int(sys.argv[1]), int(
-        sys.argv[2]), float(sys.argv[3]), int(sys.argv[4]))
+    sim = Simulation(int(sys.argv[1]), int(sys.argv[2]), float(sys.argv[3]),
+                     int(sys.argv[4]))
 
     # Max radius you want the pygame draw object (circle) to have (in pixels)
     sim.draw_radius = radius_cap
