@@ -4,47 +4,6 @@ import pygame
 import sys
 
 
-class Body:
-
-    def __init__(self):
-        pass
-
-    # Draws the body using its current position and attributes
-    def draw(self, screen, radius, w, h, squeeze):
-        # Calculate scale to fit x,y coordinates within screen resolution
-        x_max = radius
-        x_min = -radius
-        y_max = radius
-        y_min = -radius
-        x_scale = 1 / (x_max - x_min)
-        y_scale = 1 / (y_max - x_min)
-
-        # Size of the universe itself - bound to a certain resolution.
-        # Smaller than the specified resolution for visualization purposes.
-        # Also determines how "spread" out the bodies are on x,y axes
-        bounding_factor = min(w, h) // squeeze
-
-        # + w/h // 2 - bounding_factor//2 is the formula used to center the universe in the main
-        # window/resoultion
-        xs = ((x_scale * (self.position.x - x_min)) *
-              bounding_factor) + w // 2 - bounding_factor // 2
-        ys = ((y_scale * (self.position.y - y_min)) *
-              bounding_factor) + h // 2 - bounding_factor // 2
-
-        pygame.draw.circle(screen, self.colour, (xs, ys), self.radius)
-
-    # Updates velocity and moves the body
-    def update(self, dt):
-        self.update_velocity(dt)
-        self.position += (self.velocity * dt)
-
-    # Updates velocity using the net acceration and dt
-    def update_velocity(self, dt):
-        self.velocity += self.acceleration * dt
-        # Reset acceleration after each full iteration
-        self.acceleration = Vector(0, 0, 0)
-
-
 class Simulation:
 
     def __init__(self, w, h, step, squeeze):
