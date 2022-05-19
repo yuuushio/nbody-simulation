@@ -23,6 +23,9 @@ class Calculator:
         self.mass_m = self.full_df.iloc[:, [0]].to_numpy()
         self.pos_m = self.full_df.iloc[:, [1, 2]].to_numpy()
         self.vel_m = self.full_df.iloc[:, [3, 4]].to_numpy()
+
+    def num_bodies(self):
+        return len(self.full_df)
     
     def delta_position(self, i):
         # np.delete used to skip calculation when we're comparing a body/index
@@ -60,6 +63,8 @@ class Calculator:
 
         # Matrix of force exerted by each body on x,y 
         force_m = (delta_pos / dist_m) * magnitude_matrix
+        
+        return force_m
 
     # Calculate the net acceleration acting on i
     def acceleation(self, i):
@@ -67,10 +72,11 @@ class Calculator:
         # sum f/m exerted by all bodies
         return np.sum(self.force_matrix(i)/self.mass_m[i], axis=0)
     
-    def updatte_velocity(self, i):
+    def update_velocity(self, i):
         self.vel_m[i] += self.acceleation(i) * self.timestep
     
     def new_position(self, i):
+        self.update_velocity(i)
         self.pos_m[i] += self.vel_m[i] * self.timestep
         return self.pos_m[i]
 
@@ -152,7 +158,7 @@ class Simulation:
 
             screen.fill((22, 19, 32))
 
-            for i in range(len(self.full_df)):
+            for i in range(self.calc.num_bodies()):
                 scale_tup = self.draw(self.calc.new_position(i))
 
                 pygame.draw.circle(screen, self.colour, scale_tup, 1)
