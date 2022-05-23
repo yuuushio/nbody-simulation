@@ -43,12 +43,18 @@ python nbody.py 1920 1080 dt 1 data/solarSystem.txt
 
 ## Demo
 
-<img src="data/demo/simple-solarsystem.gif" width=600/>
+<img src="https://raw.githubusercontent.com/yuuushio/nbody-simulation/main/data/demo/blossom.gif" width=600/>
 
-<img src="data/demo/dance.gif" width=600/>
+<img src="https://raw.githubusercontent.com/yuuushio/nbody-simulation/main/data/demo/galaxy.gif" width=600/>
 
-<img src="data/demo/earths.gif" width=600/>
+<img src="https://raw.githubusercontent.com/yuuushio/nbody-simulation/main/data/demo/simple-solarsystem.gif" width=600/>
 
-<img src="data/demo/entropy.gif" width=600/>
+<img src="https://raw.githubusercontent.com/yuuushio/nbody-simulation/main/data/demo/dance.gif" width=600/>
 
-<img src="data/demo/quad-stars.gif" width=600/>
+<img src="https://raw.githubusercontent.com/yuuushio/nbody-simulation/main/data/demo/earths.gif" width=600/>
+
+<img src="https://raw.githubusercontent.com/yuuushio/nbody-simulation/main/data/demo/entropy.gif" width=600/>
+
+
+
+
