@@ -154,8 +154,6 @@ class Simulation:
         clock = pygame.time.Clock()
         run = True
 
-        
-
         # Game loop
         while run:
             clock.tick(self.fps)
