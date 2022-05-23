@@ -1,3 +1,3 @@
 #! /bin/sh
 
-python nbody_eff.py 1280 720 35000 1 data/galaxy.txt
+python nbody_eff.py 960 540 35000 1 data/chaosblossom.txt

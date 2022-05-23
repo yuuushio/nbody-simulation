@@ -31,7 +31,7 @@ class Calculator:
 
     def initialize_data(self):
         self.full_df, self.universe_radius = self.parser.get_data()
-        print(self.universe_radius)
+        print("# of bodies", len(self.full_df))
         self.mass_m = self.full_df.iloc[:, [0]].to_numpy()
         self.pos_m = self.full_df.iloc[:, [1, 2]].to_numpy()
         self.vel_m = self.full_df.iloc[:, [3, 4]].to_numpy()
@@ -153,6 +153,8 @@ class Simulation:
         pygame.display.set_caption("nbody")
         clock = pygame.time.Clock()
         run = True
+
+        
 
         # Game loop
         while run:
