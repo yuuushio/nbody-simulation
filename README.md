@@ -21,7 +21,7 @@ First, make the `run.sh` file executable using `chmod +x run.sh` command. Then, 
 ./run.sh
 ```
 
-Alternatively, run the `nbody.py` file directly by specifying your own command line arguments in the following format:
+Alternatively, run the `nbody_eff.py` file directly by specifying your own command line arguments in the following format:
 ```bash
 python nbody_eff.py <w> <r> <dt> <squeeze> <file>
 ```
