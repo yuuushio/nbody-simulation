@@ -5,7 +5,7 @@ N-Body Simulation is a common astrophysics simulation, used to model orbiting bo
 ### Update - `nbody_eff.py` (24/05/2022)
 `nbody_eff` is a more efficient version of the original `nbody` (which is now renamed to `nbody_old`). It can easily handle (along with the animation) more than 3000 body objects; whereas, the original version would end up lagging (regarding the animation/visualization) significantly when dealing with more than 300 bodies. 
 
-The original version consisted of the conventional, double for-loop - where for each body, it would calculate its new velocity and position as a result of forces exerted by other bodies. As you can probably tell, running this double for-loop, over a large number of bodies, each animation tick, would seriously slow down the processing. In the new version, however, the body/object data is transformed into matricies, so as to make use of numpy's broadcasting and vectorized operations, which would allow us to perform the mathematical calculations significantly faster.
+The original version consisted of the conventional, double for-loop - where, for each body, it would calculate its new velocity and position as a result of forces exerted by other bodies. As you can probably tell, running this double for-loop, over a large number of bodies, each animation tick, would seriously slow down the processing. In the new version, however, the body/object data is transformed into matricies, so as to make use of numpy's broadcasting and vectorized operations, which would allow us to perform the mathematical calculations significantly faster.
 
 *The original version is still there to see the differences in the implemenation and the performance improvements.*
 
