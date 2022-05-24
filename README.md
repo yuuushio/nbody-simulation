@@ -49,13 +49,16 @@ python nbody.py 1920 1080 dt 1 data/solarSystem.txt
 
 ## Demo
 
-Data consisting of 601 bodies, ran on `nbody.py`:
+Data consisting of 601 bodies, ran on `nbody_eff.py`:
+
 <img src="https://raw.githubusercontent.com/yuuushio/nbody-simulation/main/data/demo/blossom.gif" width=600/>
 
-Data consisting of 1001 bodies, ran on `nbody.py`:
+Data consisting of 1001 bodies, ran on `nbody_eff.py`:
+
 <img src="https://raw.githubusercontent.com/yuuushio/nbody-simulation/main/data/demo/galaxy.gif" width=600/>
 
 The follow data was ran on `nbody_old.py`:
+
 <img src="https://raw.githubusercontent.com/yuuushio/nbody-simulation/main/data/demo/simple-solarsystem.gif" width=600/>
 
 <img src="https://raw.githubusercontent.com/yuuushio/nbody-simulation/main/data/demo/dance.gif" width=600/>
