@@ -2,11 +2,6 @@
 
 N-Body Simulation is a common astrophysics simulation, used to model orbiting bodies within a solar system and galaxy. The simulation is done with the integration of Newton's gravitational force equation - calculating the gravitational force between two bodies, which is then used to calculate the new velocity and position using a timestep, `dt`. This is the common brute-force method with time complexity of `O(n^2)`; it's is good for understanding the concept, and forms a basis for more efficient, practical models. The results of the simulation are animated and can be visualized in real-time via a graphical interface, which itself is implemented using PyGame.
 
-### Update (24/05/2022)
-`main.py` has been refactored to a more efficient version of the original `nbody` (which is now renamed to `nbody_old`). It can easily handle (the actual animation) more than 3000 body objects; whereas, the original version would end up lagging (regarding the animation/visualization) significantly when dealing with more than 300 bodies. 
-
-The original version consisted of the conventional, double for-loop - where, for each body, it would calculate its new velocity and position as a result of forces exerted by other bodies. As you can probably tell, running this double for-loop, over a large number of bodies, each animation tick, would seriously slow down the processing. In the new version, however, the body/object data is transformed into matricies, so as to make use of numpy's broadcasting and vectorized operations, which would allow us to perform the mathematical calculations significantly faster.
-
 *The original version is still there to see the differences in the implemenation and the performance improvements.*
 
 ## Dependencies
@@ -67,6 +62,9 @@ The follow data was ran on `nbody_old.py`:
 
 <img src="https://raw.githubusercontent.com/yuuushio/nbody-simulation/main/data/demo/entropy.gif" width=600/>
 
+## Update (24/05/2022)
+`main.py` has been refactored to a more efficient version of the original `nbody` (which is now renamed to `nbody_old`). It can easily handle (the actual animation) more than 3000 body objects; whereas, the original version would end up lagging (regarding the animation/visualization) significantly when dealing with more than 300 bodies. 
 
+The original version consisted of the conventional, double for-loop - where, for each body, it would calculate its new velocity and position as a result of forces exerted by other bodies. As you can probably tell, running this double for-loop, over a large number of bodies, each animation tick, would seriously slow down the processing. In the new version, however, the body/object data is transformed into matricies, so as to make use of numpy's broadcasting and vectorized operations, which would allow us to perform the mathematical calculations significantly faster.
 
 
